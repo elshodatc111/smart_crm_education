@@ -11,10 +11,6 @@ use Illuminate\Http\Request;
 
 class SettingController extends Controller{
 
-    public function room(){
-        return view('setting.room');
-    }
-
     public function payment(){
         return view('setting.payment');
     }

@@ -20,23 +20,18 @@
 </li>
 
 <li class="nav-item">
-  <a class="nav-link {{ request()->routeIs(['setting_payment','setting_room','setting_cours','setting_region']) ? '' : 'collapsed' }}" data-bs-target="#davomad-nav" data-bs-toggle="collapse" href="#">
+  <a class="nav-link {{ request()->routeIs(['setting_payment','setting_cours','setting_region']) ? '' : 'collapsed' }}" data-bs-target="#davomad-nav" data-bs-toggle="collapse" href="#">
     <i class="bi bi-calendar2-check"></i><span>Sozlamalar</span><i class="bi bi-chevron-down ms-auto"></i>
   </a>
-  <ul id="davomad-nav" class="nav-content collapse {{ request()->routeIs(['setting_payment','setting_room','setting_cours','setting_region']) ? 'show' : '' }}" data-bs-parent="#sidebar-nav">
+  <ul id="davomad-nav" class="nav-content collapse {{ request()->routeIs(['setting_payment','setting_cours','setting_region']) ? 'show' : '' }}" data-bs-parent="#sidebar-nav">
     <li>
       <a href="{{ route('setting_payment') }}" class="nav-link {{ request()->routeIs(['setting_payment']) ? '' : 'collapsed' }}">
         <i class="bi bi-dot"></i><span>To'lovlar | Chegirmalar</span>
       </a>
     </li>
     <li>
-      <a href="{{ route('setting_room') }}" class="nav-link {{ request()->routeIs(['setting_room']) ? '' : 'collapsed' }}">
-        <i class="bi bi-dot"></i><span>Dars xonalari</span>
-      </a>
-    </li>
-    <li>
       <a href="{{ route('setting_cours') }}" class="nav-link {{ request()->routeIs(['setting_cours']) ? '' : 'collapsed' }}">
-        <i class="bi bi-dot"></i><span>Kurslar</span>
+        <i class="bi bi-dot"></i><span>Kurslar | Xonalar</span>
       </a>
     </li>
     <li>

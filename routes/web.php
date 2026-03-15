@@ -17,7 +17,6 @@ Route::middleware(['auth','role:admin,director,manager,operator,user'])->group(f
 
 });
 Route::middleware(['auth','role:admin,director'])->group(function () {
-    Route::get('/setting/room', [SettingController::class, 'room'])->name('setting_room');
     Route::get('/setting/payment', [SettingController::class, 'payment'])->name('setting_payment');
     Route::get('/setting/cours', [SettingController::class, 'cours'])->name('setting_cours');
     Route::get('/setting/region', [SettingController::class, 'region'])->name('setting_region');
