@@ -17,10 +17,12 @@ Route::middleware(['auth','role:admin,director,manager,operator,user'])->group(f
 
 });
 Route::middleware(['auth','role:admin,director'])->group(function () {
-    Route::get('/setting/message', [SettingController::class, 'message'])->name('setting_message');
     Route::get('/setting/room', [SettingController::class, 'room'])->name('setting_room');
     Route::get('/setting/payment', [SettingController::class, 'payment'])->name('setting_payment');
     Route::get('/setting/cours', [SettingController::class, 'cours'])->name('setting_cours');
     Route::get('/setting/region', [SettingController::class, 'region'])->name('setting_region');
+    Route::post('/setting/region/create', [SettingController::class, 'createRegion'])->name('setting_region_create');
+    Route::delete('/setting/regions/{id}', [SettingController::class, 'destroyRegion'])->name('regions_destroy');
+    Route::post('/setting/sms/update', [SettingController::class, 'smsUpdate'])->name('sms_settings_update');
 
 });

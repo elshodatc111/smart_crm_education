@@ -61,6 +61,7 @@
         $(".work_time").inputmask("99:99 - 99:99");
         $(".inn").inputmask("9999999999");
         $(".long_lat").inputmask("99.9999999");
+        $(".region_code").inputmask("99999");
         $("#amount").inputmask({
             alias: "numeric",
             groupSeparator: " ",     // Xona birliklarini probel bilan ajratadi
