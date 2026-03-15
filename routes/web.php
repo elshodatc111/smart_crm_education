@@ -18,10 +18,13 @@ Route::middleware(['auth','role:admin,director,manager,operator,user'])->group(f
 });
 Route::middleware(['auth','role:admin,director'])->group(function () {
     Route::get('/setting/payment', [SettingController::class, 'payment'])->name('setting_payment');
-    Route::get('/setting/cours', [SettingController::class, 'cours'])->name('setting_cours');
+    Route::get('/setting/cours/room', [SettingController::class, 'coursRoom'])->name('setting_cours');
+    Route::get('/setting/cours/show/{id}', [SettingController::class, 'coursShow'])->name('setting_cours_show');
+    Route::post('/setting/cours/store', [SettingController::class,'storeCours'])->name('cours_store');
     Route::get('/setting/region', [SettingController::class, 'region'])->name('setting_region');
     Route::post('/setting/region/create', [SettingController::class, 'createRegion'])->name('setting_region_create');
     Route::delete('/setting/regions/{id}', [SettingController::class, 'destroyRegion'])->name('regions_destroy');
     Route::post('/setting/sms/update', [SettingController::class, 'smsUpdate'])->name('sms_settings_update');
-
+    Route::delete('/setting/classroom/{classroom}', [SettingController::class, 'destroyRoom'])->name('classroom_destroy');
+    Route::post('/setting/classrooms/store',[SettingController::class,'storeRoom'])->name('classrooms_store');
 });
