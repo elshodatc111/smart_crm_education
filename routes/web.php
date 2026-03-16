@@ -23,6 +23,14 @@ Route::middleware(['auth','role:admin,director'])->group(function () {
     Route::post('/setting/cours/store', [SettingController::class,'storeCours'])->name('cours_store');
     Route::delete('/setting/cours/destroy/{id}', [SettingController::class,'destroyCours'])->name('cours_destroy');
     Route::put('/setting/cours/{id}', [SettingController::class, 'updateCours'])->name('cours_update');
+    Route::post('/setting/videos/store', [SettingController::class, 'storeVideo'])->name('videos_store');
+    Route::delete('/setting/video/destroy/{id}', [SettingController::class,'destroyVideo'])->name('video_destroy');
+    Route::post('/setting/tests/store', [SettingController::class, 'storeTest'])->name('tests_store');
+    Route::delete('/setting/test/destroy/{id}', [SettingController::class,'destroyTest'])->name('test_destroy');
+    Route::post('/setting/audio/store', [SettingController::class, 'storeAudio'])->name('audio_store');
+    Route::delete('/setting/audio/{id}', [SettingController::class, 'destroyAudio'])->name('audio_delete');
+    Route::post('/setting/books/store', [SettingController::class, 'storeBook'])->name('books_store');
+    Route::delete('/setting/books/{id}', [SettingController::class, 'destroyBook'])->name('book_delete');
     Route::get('/setting/region', [SettingController::class, 'region'])->name('setting_region');
     Route::post('/setting/region/create', [SettingController::class, 'createRegion'])->name('setting_region_create');
     Route::delete('/setting/regions/{id}', [SettingController::class, 'destroyRegion'])->name('regions_destroy');
