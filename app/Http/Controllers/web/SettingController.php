@@ -42,7 +42,28 @@ class SettingController extends Controller{
         return view('setting.cours', compact('cours','classrooms'));
     }
     public function coursShow($id){
-        return view('setting.cours_show');
+        $cours = Cours::findOrFail($id);
+        $cours_video = CoursVideo::where('cours_id')->get();
+        return view('setting.cours_show',compact('cours','cours_video'));
+    }
+    public function destroyCours($id){
+        $cours = Cours::findOrFail($id);
+        $cours->delete();
+        return redirect()->route('setting_cours')->with('success','Kurs muvaffaqiyatli o\'chirildi');
+    }
+    public function updateCours(Request $request, $id){
+        $request->validate([
+            'cours_name' => 'required|string|max:255',
+            'cours_type' => 'required',
+            'description' => 'required|string'
+        ]);
+        $cours = Cours::findOrFail($id);
+        $cours->update([
+            'cours_name' => $request->cours_name,
+            'cours_type' => $request->cours_type,
+            'description' => $request->description
+        ]);
+        return redirect()->back()->with('success','Kurs muvaffaqiyatli yangilandi');
     }
     public function storeCours(Request $request){
         $request->validate([

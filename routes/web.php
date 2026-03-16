@@ -21,6 +21,8 @@ Route::middleware(['auth','role:admin,director'])->group(function () {
     Route::get('/setting/cours/room', [SettingController::class, 'coursRoom'])->name('setting_cours');
     Route::get('/setting/cours/show/{id}', [SettingController::class, 'coursShow'])->name('setting_cours_show');
     Route::post('/setting/cours/store', [SettingController::class,'storeCours'])->name('cours_store');
+    Route::delete('/setting/cours/destroy/{id}', [SettingController::class,'destroyCours'])->name('cours_destroy');
+    Route::put('/setting/cours/{id}', [SettingController::class, 'updateCours'])->name('cours_update');
     Route::get('/setting/region', [SettingController::class, 'region'])->name('setting_region');
     Route::post('/setting/region/create', [SettingController::class, 'createRegion'])->name('setting_region_create');
     Route::delete('/setting/regions/{id}', [SettingController::class, 'destroyRegion'])->name('regions_destroy');
