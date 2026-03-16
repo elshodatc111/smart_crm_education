@@ -42,6 +42,7 @@ class SettingController extends Controller{
         $classrooms = Classroom::all();
         return view('setting.cours', compact('cours','classrooms'));
     }
+
     public function coursShow($id){
         $cours = Cours::findOrFail($id);
         $cours_video = CoursVideo::where('cours_id',$id)->orderby('sort_order','asc')->get();
@@ -50,6 +51,7 @@ class SettingController extends Controller{
         $cours_books = CoursBook::where('cours_id',$id)->get();
         return view('setting.cours_show',compact('cours','cours_video','cours_tests','cours_audio','cours_books'));
     } 
+
     public function destroyBook($id){
         $book = CoursBook::findOrFail($id);
         if ($book->book_url) {
@@ -61,6 +63,7 @@ class SettingController extends Controller{
         $book->delete();
         return back()->with('success', 'Kitob muvaffaqiyatli o‘chirildi');
     }
+
     public function storeBook(Request $request){
         $request->validate([
             'cours_id' => 'required',
@@ -83,6 +86,7 @@ class SettingController extends Controller{
         ]);
         return back()->with('success','Kitob muvaffaqiyatli yuklandi');
     }
+
     public function destroyAudio($id){
         $audio = CoursAudio::findOrFail($id);
         if ($audio->audio_url) {
@@ -94,6 +98,7 @@ class SettingController extends Controller{
         $audio->delete();
         return back()->with('success', 'Audio muvaffaqiyatli o‘chirildi');
     }
+
     public function storeAudio(Request $request){
         $request->validate([
             'cours_id' => 'required',
@@ -118,11 +123,13 @@ class SettingController extends Controller{
         ]);
         return back()->with('success','Audio muvaffaqiyatli yuklandi');
     }
+
     public function destroyTest($id){
         $test = CoursTest::findOrFail($id);
         $test->delete();
         return redirect()->back()->with('success','Test savoli muvaffaqiyatli o\'chirildi');
     }
+
     public function storeTest(Request $request){
         $request->validate([
             'cours_id' => 'required',
@@ -144,11 +151,13 @@ class SettingController extends Controller{
         ]);
         return back()->with('success','Test savoli muvaffaqiyatli qo‘shildi');
     }
+
     public function destroyVideo($id){
         $video = CoursVideo::findOrFail($id);
         $video->delete();
         return redirect()->back()->with('success','Video muvaffaqiyatli o\'chirildi');
     }
+
     public function storeVideo(Request $request){
         $request->validate([
             'cours_id' => 'required',
@@ -166,11 +175,13 @@ class SettingController extends Controller{
         ]);
         return back()->with('success','Video muvaffaqiyatli qo‘shildi');
     }
+
     public function destroyCours($id){
         $cours = Cours::findOrFail($id);
         $cours->delete();
         return redirect()->route('setting_cours')->with('success','Kurs muvaffaqiyatli o\'chirildi');
     }
+
     public function updateCours(Request $request, $id){
         $request->validate([
             'cours_name' => 'required|string|max:255',
@@ -185,6 +196,7 @@ class SettingController extends Controller{
         ]);
         return redirect()->back()->with('success','Kurs muvaffaqiyatli yangilandi');
     }
+
     public function storeCours(Request $request){
         $request->validate([
             'cours_name' => 'required|string|max:255',
@@ -198,11 +210,13 @@ class SettingController extends Controller{
         ]);
         return back()->with('success','Kurs muvaffaqiyatli qo\'shildi');
     }
+
     public function destroyRoom($id){
         $classroom = Classroom::findOrFail($id);
         $classroom->delete();
         return redirect()->back()->with('success','Xona muvaffaqiyatli o\'chirildi');
     }
+
     public function storeRoom(Request $request){
         $request->validate([
             'name' => 'required|string|max:255',
@@ -218,6 +232,7 @@ class SettingController extends Controller{
         ]);
         return back()->with('success','Xona muvaffaqiyatli qo\'shildi');
     }
+
     public function region(){
         $regions = SettingRegion::get();
         $setting = SettingSms::firstOrCreate(
@@ -231,6 +246,7 @@ class SettingController extends Controller{
         );
         return view('setting.region',compact('regions','setting'));
     }
+
     public function createRegion(SettingCreateRegionRequest $request){
         SettingRegion::create([
             ...$request->validated(),
@@ -238,6 +254,7 @@ class SettingController extends Controller{
         ]);
         return back()->with('success','Hudud muvaffaqiyatli qo‘shildi');
     }
+
     public function destroyRegion($id){
         $region = SettingRegion::findOrFail($id);
         $region->deleted_by = Auth::id();
@@ -245,6 +262,7 @@ class SettingController extends Controller{
         $region->delete();
         return back()->with('success','Hudud muvaffaqiyatli o‘chirildi');
     }
+    
     public function smsUpdate(Request $request){
         SettingSms::updateOrCreate(
             ['id' => 1],
