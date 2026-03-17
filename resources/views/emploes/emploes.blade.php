@@ -24,6 +24,7 @@
                     <th>FIO</th>
                     <th>Telefon raqam</th>
                     <th>Ish haqi</th>
+                    <th>Lavozim</th>
                     <th>Holati</th>
                     <th>Ishga olindi</th>
                   </tr>
@@ -35,6 +36,19 @@
                     <td><a href="{{ route('emploes_show',$item['id']) }}">{{ $item['name'] }}</a></td>
                     <td class="text-center">{{ '+998 ' . substr($item['phone'], 4, 2) . ' ' . substr($item['phone'], 6, 3) . ' ' . substr($item['phone'], 9, 4) }}</td>
                     <td class="text-center">{{ number_format($item['balance'], 0, '.', ' ') }}</td>
+                    <td class="text-center">
+                      @if($item['role']=='director')
+                        Direktor
+                      @elseif($item['role']=='teacher')
+                        O'qituvchi
+                      @elseif($item['role']=='operator')
+                        Operator
+                      @elseif($item['role']=='manager')
+                        Manager
+                      @else
+                        Hodim
+                      @endif
+                    </td>
                     <td class="text-center">
                       @if($item['is_active']==true)
                         Aktiv

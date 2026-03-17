@@ -4,6 +4,7 @@ use App\Http\Controllers\web\AuthController;
 use App\Http\Controllers\web\EmploesController;
 use App\Http\Controllers\web\HomeController;
 use App\Http\Controllers\web\SettingController;
+use App\Http\Controllers\web\TashrifController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/login', [AuthController::class, 'login'])->name('login');
@@ -15,14 +16,15 @@ Route::middleware(['auth','role:admin,director,manager,operator,user'])->group(f
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     Route::get('/', [HomeController::class, 'dashboard'])->name('home');
     Route::get('/admin', function () {return "Admin panel";});
-
+    Route::get('/visits', [TashrifController::class, 'tashriflar'])->name('tashriflar');
+    Route::post('/visits/store', [TashrifController::class,'store'])->name('visits_store');
+    Route::get('/visits/show/{id}', [TashrifController::class, 'tashrifShow'])->name('tashrif_show');
 });
 # Hodimlar
 Route::middleware(['auth','role:admin,director'])->group(function () { 
     Route::get('/emploes', [EmploesController::class, 'emploes'])->name('emploes');
     Route::get('/emploes/show/{id}', [EmploesController::class, 'emploesShow'])->name('emploes_show');
     Route::post('/emploes/store', [EmploesController::class, 'store'])->name('emploes_store');
-
 });
 # Sozlamalar
 Route::middleware(['auth','role:admin,director'])->group(function () {
