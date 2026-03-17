@@ -18,6 +18,8 @@ Route::middleware(['auth','role:admin,director,manager,operator,user'])->group(f
 });
 Route::middleware(['auth','role:admin,director'])->group(function () {
     Route::get('/setting/payment', [SettingController::class, 'payment'])->name('setting_payment');
+    Route::post('/setting/payment-settings/store', [SettingController::class, 'storePayment'])->name('payment_settings_store');
+    Route::delete('/setting/payment-settings/{id}', [SettingController::class, 'destroyPayment'])->name('payment_setting_delete');
     Route::get('/setting/cours/room', [SettingController::class, 'coursRoom'])->name('setting_cours');
     Route::get('/setting/cours/show/{id}', [SettingController::class, 'coursShow'])->name('setting_cours_show');
     Route::post('/setting/cours/store', [SettingController::class,'storeCours'])->name('cours_store');

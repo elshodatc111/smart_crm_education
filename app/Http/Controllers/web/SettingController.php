@@ -10,6 +10,7 @@ use App\Models\CoursAudio;
 use App\Models\CoursBook;
 use App\Models\CoursTest;
 use App\Models\CoursVideo;
+use App\Models\PaymentSetting;
 use App\Models\SettingRegion;
 use App\Models\SettingSms;
 use Illuminate\Support\Facades\Auth;
@@ -19,7 +20,35 @@ use Illuminate\Support\Facades\File;
 class SettingController extends Controller{
 
     public function payment(){
-        return view('setting.payment');
+        $paymart_setting = PaymentSetting::get();
+        return view('setting.payment',compact('paymart_setting'));
+    }
+
+    public function destroyPayment($id){
+        $payment = PaymentSetting::findOrFail($id);
+        $payment->delete();
+        return back()->with('success', "To'lov muvaffaqiyatli o‘chirildi");
+    }
+
+    public function storePayment(Request $request){
+        $payment = str_replace(' ', '', $request->payment);
+        $discount = str_replace(' ', '', $request->discount);
+        $request->merge([
+            'payment' => $payment,
+            'discount' => $discount,
+        ]);
+        $request->validate([
+            'payment' => 'required|numeric|min:0',
+            'discount' => 'required|numeric|min:0',
+            'discount_day' => 'required|integer|min:1',
+        ]);
+        PaymentSetting::create([
+            'payment' => $request->payment,
+            'discount' => $request->discount,
+            'discount_day' => $request->discount_day,
+            'created_by' => Auth::id(),
+        ]);
+        return back()->with('success', "To'lov muvaffaqiyatli qo'shildi");
     }
 
     public function coursRoom(){
