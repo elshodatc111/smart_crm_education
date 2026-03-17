@@ -8,7 +8,7 @@ return new class extends Migration{
     public function up(): void{
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->enum('role',['admin','director','manager','operator','user'])->default('user')->index();
+            $table->enum('role',['admin','director','hodim','teacher','manager','operator','user'])->default('user')->index();
             $table->boolean('is_active')->default(true);
             $table->string('name');
             $table->string('phone',20)->unique();

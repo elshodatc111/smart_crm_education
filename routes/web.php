@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\web\AuthController;
+use App\Http\Controllers\web\EmploesController;
 use App\Http\Controllers\web\HomeController;
 use App\Http\Controllers\web\SettingController;
 use Illuminate\Support\Facades\Route;
@@ -16,6 +17,14 @@ Route::middleware(['auth','role:admin,director,manager,operator,user'])->group(f
     Route::get('/admin', function () {return "Admin panel";});
 
 });
+# Hodimlar
+Route::middleware(['auth','role:admin,director'])->group(function () { 
+    Route::get('/emploes', [EmploesController::class, 'emploes'])->name('emploes');
+    Route::get('/emploes/show/{id}', [EmploesController::class, 'emploesShow'])->name('emploes_show');
+    Route::post('/emploes/store', [EmploesController::class, 'store'])->name('emploes_store');
+
+});
+# Sozlamalar
 Route::middleware(['auth','role:admin,director'])->group(function () {
     Route::get('/setting/payment', [SettingController::class, 'payment'])->name('setting_payment');
     Route::post('/setting/payment-settings/store', [SettingController::class, 'storePayment'])->name('payment_settings_store');
