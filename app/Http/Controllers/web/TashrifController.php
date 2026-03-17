@@ -75,6 +75,7 @@ class TashrifController extends Controller{
         $user->save();
         return back()->with('success', 'Status muvaffaqiyatli o‘zgartirildi');
     }
+
     public function resetPassword(ChangeUserStatusRequest $request){
         $user = User::findOrFail($request->user_id);
         UserHistory::create([
@@ -87,6 +88,7 @@ class TashrifController extends Controller{
         $user->save();
         return back()->with('success', "Parol yangilandi. Yangi parol: password");
     }
+    
     public function update(UpdateUserRequest $request, $id){
         $user = User::findOrFail($id);
         $user->update([
