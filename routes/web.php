@@ -9,6 +9,7 @@ use App\Http\Controllers\web\{
     SettingController,
     TashrifController,
 };
+use App\Http\Controllers\wen\DamOlishController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/login', [AuthController::class, 'login'])->name('login');
@@ -31,7 +32,6 @@ Route::middleware(['auth','role:admin,director,manager,operator'])->group(functi
     Route::get('/kassa', [KassaController::class, 'kassa'])->name('kassa');
     Route::post('/kassa/chiqim', [KassaController::class, 'chiqim'])->name('kassa_chiqim');
     Route::post('/kassa-history/{id}/cancel', [KassaController::class, 'cancel'])->name('kassa_history_cancel');
-
 });
 # Hodimlar
 Route::middleware(['auth','role:admin,director'])->group(function () { 
@@ -72,4 +72,6 @@ Route::middleware(['auth','role:admin,director'])->group(function () {
     Route::delete('/setting/classroom/{classroom}', [SettingController::class, 'destroyRoom'])->name('classroom_destroy');
     Route::post('/setting/classrooms/store',[SettingController::class,'storeRoom'])->name('classrooms_store');
     Route::post('/setting/kassa-settings', [SettingController::class, 'updateSettingUpdate'])->name('kassa_settings_update');
+    Route::get('/setting/damolish', [DamOlishController::class, 'damOlish'])->name('setting_dam_olish');
+    Route::post('/setting/damolish/create', [DamOlishController::class, 'store'])->name('setting_dam_olish_store');
 });
