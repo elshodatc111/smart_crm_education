@@ -15,11 +15,12 @@ return new class extends Migration{
             $table->string('group_name');
             $table->integer('lesson_count');
             $table->enum('group_type', ['toq', 'juft', 'all']);
-            $table->time('lesson_time');
+            $table->string('lesson_time');
             $table->decimal('teacher_pay', 15, 2)->default(0);
             $table->decimal('teacher_bonus', 15, 2)->default(0);
             $table->date('start_lesson');
             $table->foreignId('admin_id')->constrained('users')->cascadeOnDelete();
+            $table->foreignId('next_group_id')->nullable()->constrained('groups')->nullOnDelete();
             $table->timestamps();
             $table->softDeletes();
         });

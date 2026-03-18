@@ -14,7 +14,6 @@ class GroupData extends Model{
     ];
     protected $casts = [
         'data' => 'date',
-        'time' => 'datetime:H:i',
     ];
     public function group(){
         return $this->belongsTo(Group::class, 'group_id');

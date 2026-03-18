@@ -6,9 +6,9 @@
 </li>
 
 <li class="nav-item">
-  <a class="nav-link collapsed" href="">
+  <a class="nav-link {{ request()->routeIs(['groups','group_show']) ? '' : 'collapsed' }}" href="{{ route('groups') }}">
     <i class="bi bi-house-heart"></i>
-    <span>Firmalar</span>
+    <span>Guruhlar</span>
   </a>
 </li>
 

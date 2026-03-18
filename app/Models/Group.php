@@ -20,15 +20,18 @@ class Group extends Model{
         'teacher_bonus',
         'start_lesson',
         'admin_id',
+        'next_group_id'
     ];
     protected $casts = [
-        'lesson_time' => 'datetime:H:i',
         'start_lesson' => 'date',
         'teacher_pay' => 'decimal:2',
         'teacher_bonus' => 'decimal:2',
     ];
     public function course(){
         return $this->belongsTo(Cours::class, 'cours_id');
+    }
+    public function nextGroup(){
+        return $this->belongsTo(Group::class, 'next_group_id');
     }
     public function room(){
         return $this->belongsTo(Classroom::class, 'room_id');

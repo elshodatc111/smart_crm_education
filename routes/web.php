@@ -8,8 +8,9 @@ use App\Http\Controllers\web\{
     KassaController,
     SettingController,
     TashrifController,
+    DamOlishController,
+    GroupController,
 };
-use App\Http\Controllers\wen\DamOlishController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/login', [AuthController::class, 'login'])->name('login');
@@ -32,6 +33,10 @@ Route::middleware(['auth','role:admin,director,manager,operator'])->group(functi
     Route::get('/kassa', [KassaController::class, 'kassa'])->name('kassa');
     Route::post('/kassa/chiqim', [KassaController::class, 'chiqim'])->name('kassa_chiqim');
     Route::post('/kassa-history/{id}/cancel', [KassaController::class, 'cancel'])->name('kassa_history_cancel');
+    # Guruhlar
+    Route::get('/groups', [GroupController::class, 'groups'])->name('groups');
+    Route::get('/group/show/{id}', [GroupController::class, 'show'])->name('group_show');
+    Route::post('/group/store', [GroupController::class, 'store'])->name('group_store');
 });
 # Hodimlar
 Route::middleware(['auth','role:admin,director'])->group(function () { 

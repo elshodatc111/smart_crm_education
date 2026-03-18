@@ -10,7 +10,7 @@ return new class extends Migration{
             $table->id();
             $table->foreignId('group_id')->constrained('groups')->cascadeOnDelete();
             $table->date('data');
-            $table->time('time');
+            $table->string('time');
             $table->timestamps();
             $table->softDeletes();
         });
