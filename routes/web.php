@@ -29,6 +29,7 @@ Route::middleware(['auth','role:admin,director,manager,operator'])->group(functi
     Route::post('/visits/users/status', [TashrifController::class, 'changeStatus'])->name('users_status');
     Route::post('/visits/reset-password', [TashrifController::class, 'resetPassword'])->name('users_reset_password');
     Route::put('/visits/update/{id}', [TashrifController::class, 'update'])->name('users_update');
+    Route::post('/group/add/user', [TashrifController::class, 'addGroup'])->name('add_user_group');
     # KASSA
     Route::get('/kassa', [KassaController::class, 'kassa'])->name('kassa');
     Route::post('/kassa/chiqim', [KassaController::class, 'chiqim'])->name('kassa_chiqim');

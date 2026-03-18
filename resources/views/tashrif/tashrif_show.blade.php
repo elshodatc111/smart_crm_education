@@ -20,7 +20,7 @@
           <button class="btn btn-warning text-dark my-2"> <i class="bi bi-tag"></i> CHEGIRMA </button>
         @endif
         @if($user['balance']>=0 || auth()->user()->role=='admin' || auth()->user()->role=='director')
-        <button class="btn btn-info text-dark my-2"> <i class="bi bi-people"></i> GURUHGA QO'SHISH </button>
+        <button class="btn btn-info text-dark my-2" data-bs-toggle="modal" data-bs-target="#new_group"> <i class="bi bi-people"></i> GURUHGA QO'SHISH </button>
         @endif
         <button class="btn btn-outline-secondary my-2" data-bs-toggle="modal" data-bs-target="#user_update"> <i class="bi bi-pencil-square"></i> TAXRIRLASH </button>
         <form action="{{ route('users_reset_password') }}" method="post" onsubmit="return confirm('Haqiqatan ham bu talabani paroli yangilansinmi?')">
@@ -216,7 +216,6 @@
 
 
 <button data-bs-toggle="modal" data-bs-target="#parol_yangilash">sasa</button>
-
 <div class="modal" id="parol_yangilash" tabindex="-1">
   <form action="#" method="post">
     @csrf 
@@ -232,6 +231,36 @@
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Bekor qilish</button>
           <button type="submit" class="btn btn-primary">Saqlash</button>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+
+<div class="modal" id="new_group" tabindex="-1">
+  <form action="{{ route('add_user_group') }}" method="post">
+    @csrf 
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Yangi guruhga qo'shish</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" name="user_id" value="{{ $user['id'] }}">
+          <label for="group_id" class="mb-2">Guruhni tanlang</label>
+          <select name="group_id" class="form-select">
+            <option value="">Tanlang...</option>
+            @foreach ($newGroups as $item)
+              <option value="{{ $item['group_id'] }}">{{ $item['group_name']." | ".$item['teacher']." | ".$item['start_lesson']." | ".$item['lesson_time'] }}</option>
+            @endforeach
+          </select>          
+          <label for="start_comment" class="my-2">Guruhga qo'shish izohi</label>
+          <textarea name="start_comment" required class="form-control">---</textarea>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Bekor qilish</button>
+          <button type="submit" class="btn btn-primary">Guruhga qo'shish</button>
         </div>
       </div>
     </div>
