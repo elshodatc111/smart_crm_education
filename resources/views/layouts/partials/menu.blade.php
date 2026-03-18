@@ -13,6 +13,13 @@
 </li>
 
 <li class="nav-item">
+  <a class="nav-link {{ request()->routeIs(['kassa']) ? '' : 'collapsed' }}" href="{{ route('kassa') }}">
+    <i class="bi bi-house-heart"></i>
+    <span>Kassa</span>
+  </a>
+</li>
+
+<li class="nav-item">
   <a class="nav-link {{ request()->routeIs(['tashriflar','tashrif_show']) ? '' : 'collapsed' }}" href="{{ route('tashriflar') }}">
     <i class="bi bi-house-heart"></i>
     <span>Tashriflar</span>

@@ -25,5 +25,19 @@ class Balans extends Model{
         'cash_exson' => 'decimal:2',
         'card_exson' => 'decimal:2',
     ];
+
+    public static function getBalans(): self{
+        return self::firstOrCreate(
+            [],
+            [
+                'cash' => 0,
+                'card' => 0,
+                'cash_salary' => 0,
+                'card_salary' => 0,
+                'cash_exson' => 0,
+                'card_exson' => 0,
+            ]
+        );
+    }
     
 }

@@ -21,4 +21,17 @@ class Kassa extends Model{
         'cost_cash_pending' => 'decimal:2',
         'cost_card_pending' => 'decimal:2',
     ];
+    public static function getSettings(): self{
+        return self::firstOrCreate(
+            [],
+            [
+                'cash' => 0,
+                'card' => 0,
+                'output_cash_pending' => 0,
+                'output_card_pending' => 0,
+                'cost_cash_pending' => 0,
+                'cost_card_pending' => 0,
+            ]
+        );
+    }
 }

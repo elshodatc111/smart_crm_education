@@ -1,10 +1,13 @@
 <?php
 
-use App\Http\Controllers\web\AuthController;
-use App\Http\Controllers\web\EmploesController;
-use App\Http\Controllers\web\HomeController;
-use App\Http\Controllers\web\SettingController;
-use App\Http\Controllers\web\TashrifController;
+use App\Http\Controllers\web\{
+    AuthController,
+    EmploesController,
+    HomeController,
+    KassaController,
+    SettingController,
+    TashrifController,
+};
 use Illuminate\Support\Facades\Route;
 
 Route::get('/login', [AuthController::class, 'login'])->name('login');
@@ -12,7 +15,7 @@ Route::get('/error/403', [AuthController::class, 'error_403'])->name('error_403'
 Route::get('/error/404', [AuthController::class, 'error_404'])->name('error_404');
 Route::post('/login/post', [AuthController::class, 'login_post'])->name('login_post');
 
-Route::middleware(['auth','role:admin,director,manager,operator,user'])->group(function () {
+Route::middleware(['auth','role:admin,director,manager,operator'])->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     Route::get('/', [HomeController::class, 'dashboard'])->name('home');
     # TASHRIF
@@ -24,10 +27,16 @@ Route::middleware(['auth','role:admin,director,manager,operator,user'])->group(f
     Route::post('/visits/reset-password', [TashrifController::class, 'resetPassword'])->name('users_reset_password');
     Route::put('/visits/update/{id}', [TashrifController::class, 'update'])->name('users_update');
     # KASSA
-    
+    Route::get('/kassa', [KassaController::class, 'kassa'])->name('kassa');
+    Route::post('/kassa/chiqim', [KassaController::class, 'chiqim'])->name('kassa_chiqim');
+    Route::post('/kassa-history/{id}/cancel', [KassaController::class, 'cancel'])->name('kassa_history_cancel');
+
 });
 # Hodimlar
 Route::middleware(['auth','role:admin,director'])->group(function () { 
+    # Kassa success    
+    Route::post('/kassa-history/{id}/approve', [KassaController::class, 'approve'])->name('kassa_history_approve');
+
     Route::get('/emploes', [EmploesController::class, 'emploes'])->name('emploes');
     Route::get('/emploes/show/{id}', [EmploesController::class, 'emploesShow'])->name('emploes_show');
     Route::post('/emploes/store', [EmploesController::class, 'store'])->name('emploes_store');
