@@ -56,4 +56,5 @@ Route::middleware(['auth','role:admin,director'])->group(function () {
     Route::post('/setting/sms/update', [SettingController::class, 'smsUpdate'])->name('sms_settings_update');
     Route::delete('/setting/classroom/{classroom}', [SettingController::class, 'destroyRoom'])->name('classroom_destroy');
     Route::post('/setting/classrooms/store',[SettingController::class,'storeRoom'])->name('classrooms_store');
+    Route::post('/setting/kassa-settings', [SettingController::class, 'updateSettingUpdate'])->name('kassa_settings_update');
 });

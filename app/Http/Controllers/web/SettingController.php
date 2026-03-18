@@ -10,6 +10,7 @@ use App\Models\CoursAudio;
 use App\Models\CoursBook;
 use App\Models\CoursTest;
 use App\Models\CoursVideo;
+use App\Models\KassaSetting;
 use App\Models\PaymentSetting;
 use App\Models\SettingRegion;
 use App\Models\SettingSms;
@@ -20,8 +21,22 @@ use Illuminate\Support\Facades\File;
 class SettingController extends Controller{
 
     public function payment(){
-        $paymart_setting = PaymentSetting::get();
-        return view('setting.payment',compact('paymart_setting'));
+        $paymart_setting = PaymentSetting::where('discount_day','!=','99999')->get();
+        $paymart_maxsus = PaymentSetting::where('discount_day','99999')->get();
+        $kassa_setting = KassaSetting::getSettings();
+        return view('setting.payment',compact('paymart_setting','paymart_maxsus','kassa_setting'));
+    }
+
+    public function updateSettingUpdate(Request $request){
+        $data = $request->validate([
+            'cash_exson' => 'required|integer|min:0|max:100',
+            'card_exson' => 'required|integer|min:0|max:100',
+            'cash_salary' => 'required|integer|min:0|max:100',
+            'card_salary' => 'required|integer|min:0|max:100',
+        ]);
+        $kassa_setting = KassaSetting::firstOrCreate([]);
+        $kassa_setting->update($data);
+        return back()->with('success', 'Sozlamalar muvaffaqiyatli saqlandi ✅');
     }
 
     public function destroyPayment($id){

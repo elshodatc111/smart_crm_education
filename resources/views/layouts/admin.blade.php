@@ -86,6 +86,14 @@
             rightAlign: false,       // Matnni chapdan boshlab yozish
             removeMaskOnSubmit: true // Formani yuborganda probellarni olib tashlaydi
         });
+        $("#amount3").inputmask({
+            alias: "numeric",
+            groupSeparator: " ",     // Xona birliklarini probel bilan ajratadi
+            digits: 0,               // Verguldan keyingi raqamlar (kerak bo'lsa 2 qiling)
+            autoGroup: true,         // Avtomatik guruhlash
+            rightAlign: false,       // Matnni chapdan boshlab yozish
+            removeMaskOnSubmit: true // Formani yuborganda probellarni olib tashlaydi
+        });
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </body>

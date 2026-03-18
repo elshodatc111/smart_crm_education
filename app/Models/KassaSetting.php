@@ -11,4 +11,15 @@ class KassaSetting extends Model{
         'cash_salary',
         'card_salary',
     ];
+    public static function getSettings(): self{
+        return self::firstOrCreate(
+            [],
+            [
+                'cash_exson' => 0,
+                'card_exson' => 0,
+                'cash_salary' => 0,
+                'card_salary' => 0,
+            ]
+        );
+    }
 }
