@@ -9,7 +9,7 @@ return new class extends Migration{
             $table->enum('type', [
                 'kirim_cash','kirim_card','kirim_exson_cash','kirim_exson_card','kirim_ish_haqi_cash','kirim_ish_haqi_card',
                 'xarajat_kassa_cash','xarajat_kassa_card','xarajat_balans_cash','xarajat_balans_card',
-                'chiqim_cash','chiqim_card','chiqim_exson',
+                'chiqim_cash','chiqim_card','chiqim_exson_cash','chiqim_exson_card',
                 'cash_to_ishhaqi','card_to_ishhaqi',
                 'ishhaqi_to_cash','ishhaqi_to_card',
                 'ishhaqi_pay_cash','ishhaqi_pay_card',

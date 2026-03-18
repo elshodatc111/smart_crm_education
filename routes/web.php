@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\web\{
     AuthController,
+    BalansController,
     EmploesController,
     HomeController,
     KassaController,
@@ -36,7 +37,12 @@ Route::middleware(['auth','role:admin,director,manager,operator'])->group(functi
 Route::middleware(['auth','role:admin,director'])->group(function () { 
     # Kassa success    
     Route::post('/kassa-history/{id}/approve', [KassaController::class, 'approve'])->name('kassa_history_approve');
-
+    # Balans
+    Route::get('/balans', [BalansController::class, 'balans'])->name('balans');
+    Route::post('/balans/chiqim', [BalansController::class, 'balansChiqim'])->name('balans_chiqim');
+    Route::post('/balans/convert', [BalansController::class, 'balansConvert'])->name('balans_convert');
+    Route::post('/balans/exson', [BalansController::class, 'exsonChiqim'])->name('balans_exson');
+    # Hodimlar
     Route::get('/emploes', [EmploesController::class, 'emploes'])->name('emploes');
     Route::get('/emploes/show/{id}', [EmploesController::class, 'emploesShow'])->name('emploes_show');
     Route::post('/emploes/store', [EmploesController::class, 'store'])->name('emploes_store');
