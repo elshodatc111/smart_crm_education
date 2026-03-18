@@ -10,6 +10,7 @@ return new class extends Migration{
             $table->id();
             $table->foreignId('group_id')->constrained('groups')->cascadeOnDelete();
             $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
+            $table->boolean('is_active')->default(true);
             $table->date('start_data');
             $table->text('start_comment')->nullable();
             $table->foreignId('start_admin_id')->constrained('users')->cascadeOnDelete();

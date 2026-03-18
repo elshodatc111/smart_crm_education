@@ -21,6 +21,7 @@ return new class extends Migration{
             $table->date('start_lesson');
             $table->foreignId('admin_id')->constrained('users')->cascadeOnDelete();
             $table->foreignId('next_group_id')->nullable()->constrained('groups')->nullOnDelete();
+            $table->date('end_lesson')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

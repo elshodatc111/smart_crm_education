@@ -20,6 +20,7 @@ class Group extends Model{
         'teacher_bonus',
         'start_lesson',
         'admin_id',
+        'end_lesson',
         'next_group_id'
     ];
     protected $casts = [

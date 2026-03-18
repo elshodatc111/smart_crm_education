@@ -9,6 +9,7 @@ class GroupUser extends Model{
     protected $fillable = [
         'group_id',
         'user_id',
+        'is_active',
         'start_data',
         'start_comment',
         'start_admin_id',
@@ -17,6 +18,7 @@ class GroupUser extends Model{
         'end_admin_id',
     ];
     protected $casts = [
+        'is_active' => 'boolean',
         'start_data' => 'date',
         'end_data' => 'date',
     ];

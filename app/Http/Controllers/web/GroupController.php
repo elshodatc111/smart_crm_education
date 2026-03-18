@@ -25,43 +25,26 @@ class GroupController extends Controller{
         $form['rooms'] = Classroom::get();
         $form['paymarts'] = PaymentSetting::where('discount_day','!=','99999')->get();
         $form['teachers'] = User::where('role','teacher')->where('is_active',true)->get();
-        
-        $groups = Group::with(['teacher'])->withCount([
-        'students as users_count' => function ($q) {
-            $q->whereNull('end_data');}])->withMax('lessons', 'data')->get()
-            ->map(function ($group) {
-                $today = now();
-                if ($group->start_lesson > $today) {
-                    $group->status = 'Yangi';
-                    $group->status_order = 1;
-                }
-                elseif ($group->lessons_max_data && $group->lessons_max_data >= $today) {
-                    $group->status = 'Jarayonda';
-                    $group->status_order = 2;
-                }
-                else {
-                    $group->status = 'Yakunlangan';
-                    $group->status_order = 3;
-                }
-                return $group;
-            })->filter(function ($group) {
-                if ($group->status !== 'Yakunlangan') {
-                    return true;
-                }
-            return Carbon::parse($group->lessons_max_data)->gte(now()->subDays(60));
-        })->sortBy([
-            ['status_order', 'asc'],
-            ['lesson_time', 'desc'],
-        ])->map(function ($group) {
-            return [
-                'id' => $group->id,
-                'group_name' => $group->group_name,
-                'start_lesson' => $group->start_lesson->format('Y-m-d') . " ( " . $group->lesson_time . " )",
-                'teacher' => $group->teacher->name ?? '',
-                'users' => $group->users_count,
-                'status' => $group->status,
-            ];
-        })->values();
+        $dateEnd = now()->subDays(60);
+        $GROUP = Group::where('end_lesson','>=',$dateEnd)->orderBy('start_lesson','desc')->with('teacher')->get();
+        $groups = [];
+        foreach ($GROUP as $key => $value) {
+            $today = now()->toDateString();
+            if ($value->start_lesson > $today) {
+                $status = 'Yangi';
+            } elseif ($value->start_lesson <= $today && $value->end_lesson >= $today) {
+                $status = 'Jarayonda';
+            } else {
+                $status = 'Yakunlangan';
+            }
+            $groups[$key]['id'] = $value->id;
+            $groups[$key]['group_name'] = $value->group_name;
+            $groups[$key]['end_lesson'] = $value->end_lesson;
+            $groups[$key]['start_lesson'] = $value->start_lesson->format('Y-m-d')." (".$value->lesson_time.")";
+            $groups[$key]['teacher'] = $value->teacher->name ?? '';
+            $groups[$key]['users'] = GroupUser::where('group_id',$value->id)->where('is_active',true)->count();
+            $groups[$key]['status'] = $status;
+        }
         return view('group.groups',compact('form','groups'));
     }
 
@@ -106,6 +89,9 @@ class GroupController extends Controller{
                 $start->addDay();
             }
             GroupData::insert($lessons);
+            $lastLesson = end($lessons);
+            $group->end_lesson = $lastLesson['data'];
+            $group->save();
         });
         return back()->with('success', 'Guruh va dars jadvali yaratildi ✅');
     }

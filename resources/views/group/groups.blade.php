@@ -22,8 +22,9 @@
                   <tr class="text-center">
                     <th>#</th>
                     <th>Guruh</th>
-                    <th>Boshlanish vaqti</th>
                     <th>O'qituvchi</th>
+                    <th>Boshlanish vaqti</th>
+                    <th>Tugash vaqti</th>
                     <th>Darslar soni</th>
                     <th>Guruh holati</th>
                   </tr>
@@ -32,9 +33,10 @@
                   @forelse ($groups as $item)
                   <tr>
                     <td class="text-center">{{ $loop->index+1 }}</td>
-                    <td><a href="{{ route('group_show',$item['id']) }}">{{ $item['group_name'] }}</a></td>
-                    <td class="text-center">{{ $item['start_lesson'] }}</td>
+                    <td><a href="{{ route('group_show',$item['id']) }}">{{ $item['group_name'] }}</a></td> 
                     <td>{{ $item['teacher'] }}</td>
+                    <td class="text-center">{{ $item['start_lesson'] }}</td>
+                    <td class="text-center">{{ $item['end_lesson'] }}</td>
                     <td class="text-center">{{ $item['users'] }}</td>
                     <td class="text-center">
                       @if($item['status']=='Yangi')
