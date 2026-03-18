@@ -15,7 +15,7 @@ Route::post('/login/post', [AuthController::class, 'login_post'])->name('login_p
 Route::middleware(['auth','role:admin,director,manager,operator,user'])->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     Route::get('/', [HomeController::class, 'dashboard'])->name('home');
-    Route::get('/admin', function () {return "Admin panel";});
+    # TASHRIF
     Route::get('/visits', [TashrifController::class, 'tashriflar'])->name('tashriflar');
     Route::post('/visits/store', [TashrifController::class,'store'])->name('visits_store');
     Route::get('/visits/show/{id}', [TashrifController::class, 'tashrifShow'])->name('tashrif_show');
@@ -23,6 +23,8 @@ Route::middleware(['auth','role:admin,director,manager,operator,user'])->group(f
     Route::post('/visits/users/status', [TashrifController::class, 'changeStatus'])->name('users_status');
     Route::post('/visits/reset-password', [TashrifController::class, 'resetPassword'])->name('users_reset_password');
     Route::put('/visits/update/{id}', [TashrifController::class, 'update'])->name('users_update');
+    # KASSA
+    
 });
 # Hodimlar
 Route::middleware(['auth','role:admin,director'])->group(function () { 
