@@ -14,10 +14,10 @@
   <section class="section dashboard">
     <div class="row">
       <div class="col-12 mb-2 d-flex flex-wrap gap-2">
-        <button class="btn btn-success my-2"> <i class="bi bi-cash-coin"></i> TO'LOV QILISH </button>
-        <button class="btn btn-primary my-2"> <i class="bi bi-percent"></i> CHEGIRMALI TO'LOV </button>
+        <button class="btn btn-success my-2" data-bs-toggle="modal" data-bs-target="#tulovModel"> <i class="bi bi-cash-coin"></i> TO'LOV QILISH </button>
+        <button class="btn btn-primary my-2" data-bs-toggle="modal" data-bs-target="#chegirmali_tolov"> <i class="bi bi-percent"></i> CHEGIRMALI TO'LOV </button>
         @if(auth()->user()->role=='admin' || auth()->user()->role=='director')
-          <button class="btn btn-warning text-dark my-2"> <i class="bi bi-tag"></i> CHEGIRMA </button>
+          <button class="btn btn-warning text-dark my-2" data-bs-toggle="modal" data-bs-target="#admin_chegirma"> <i class="bi bi-tag"></i> CHEGIRMA </button>
         @endif
         @if($user['balance']>=0 || auth()->user()->role=='admin' || auth()->user()->role=='director')
         <button class="btn btn-info text-dark my-2" data-bs-toggle="modal" data-bs-target="#new_group"> <i class="bi bi-people"></i> GURUHGA QO'SHISH </button>
@@ -137,77 +137,167 @@
         </div>
       </div>
       <div class="col-lg-8">
-        <div class="card notes-wrapper" style="max-height: 330px; overflow-y: auto; overflow-x: hidden;height:330px">
+        <div class="card">
           <div class="card-body">
             <h5 class="card-title">Talaba tarixi</h5>
-            <table class="table table-bordered" style="font-size: 14px;">
-                <thead>
-                  <tr class="text-center">
-                    <th>#</th>
-                    <th>Hodisa vaqti</th>
-                    <th>Hodisa turi</th>
-                    <th>Hodisa haqida</th>
-                    <th>Meneger</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  @forelse ($history as $item)
-                    <tr>
-                      <td class="text-center">{{ $loop->index+1 }}</td>
-                      <td>
-                        @if($item['type'] == 'visit')
-                          <b class="text-primary">Tashrif</b>
-                        @elseif($item['type'] == 'visit')
-                          <b class="text-primary">Tashrif</b>
-                        @elseif($item['type'] == 'payment_cash')
-                          <b class="text-success">Naqt tolov</b>
-                        @elseif($item['type'] == 'payment_card')
-                          <b class="text-success">Karta to'lov</b>
-                        @elseif($item['type'] == 'payment_return')
-                          <b class="text-danger">To'lov qaytarildi</b>
-                        @elseif($item['type'] == 'discont')
-                          <b class="text-warning">Chegirma</b>
-                        @elseif($item['type'] == 'jarima')
-                          <b class="text-danger">Jarima</b>
-                        @elseif($item['type'] == 'group_add')
-                          <b class="text-info">Guruhga qo'shildi</b>
-                        @elseif($item['type'] == 'group_delete')
-                          <b class="text-danger">Guruhdan o'chirildi</b>
-                        @elseif($item['type'] == 'resset_password')
-                          <b class="text-warning">Parol yangilandi</b>
-                        @elseif($item['type'] == 'update')
-                          <b class="text-info">Yangilandi</b>
-                        @elseif($item['type'] == 'status_of')
-                          <b class="text-danger">Bloklandi</b>
-                        @elseif($item['type'] == 'status_on')
-                          <b class="text-success">Aktivlashtirildi</b>
-                        @endif
-                      </td>
-                      <td>{{ $item['description'] }}</td>
-                      <td class="text-center">{{ $item->creator->name }}</td>
-                      <td class="text-center">{{ $item['created_at'] }}</td>
+            <div class="table-responsive" style="max-height: 248px; overflow-y: auto; overflow-x: hidden;height:248px">
+              <table class="table table-bordered" style="font-size: 14px;">
+                  <thead>
+                    <tr class="text-center">
+                      <th>#</th>
+                      <th>Hodisa vaqti</th>
+                      <th>Hodisa turi</th>
+                      <th>Hodisa haqida</th>
+                      <th>Meneger</th>
                     </tr>
-                  @empty
-                    <tr>
-                      <td colspan="5" class="text-center">Tashrif tarixi mavjud emas.</td>
-                    </tr>
-                  @endforelse
-                </tbody>
-            </table>
+                  </thead>
+                  <tbody>
+                    @forelse ($history as $item)
+                      <tr>
+                        <td class="text-center">{{ $loop->index+1 }}</td>
+                        <td>
+                          @if($item['type'] == 'visit')
+                            <b class="text-primary">Tashrif</b>
+                          @elseif($item['type'] == 'visit')
+                            <b class="text-primary">Tashrif</b>
+                          @elseif($item['type'] == 'payment_cash')
+                            <b class="text-success">Naqt tolov</b>
+                          @elseif($item['type'] == 'payment_card')
+                            <b class="text-success">Karta to'lov</b>
+                          @elseif($item['type'] == 'payment_return')
+                            <b class="text-danger">To'lov qaytarildi</b>
+                          @elseif($item['type'] == 'discont')
+                            <b class="text-warning">Chegirma</b>
+                          @elseif($item['type'] == 'jarima')
+                            <b class="text-danger">Jarima</b>
+                          @elseif($item['type'] == 'group_add')
+                            <b class="text-info">Guruhga qo'shildi</b>
+                          @elseif($item['type'] == 'group_delete')
+                            <b class="text-danger">Guruhdan o'chirildi</b>
+                          @elseif($item['type'] == 'resset_password')
+                            <b class="text-warning">Parol yangilandi</b>
+                          @elseif($item['type'] == 'update')
+                            <b class="text-info">Yangilandi</b>
+                          @elseif($item['type'] == 'status_of')
+                            <b class="text-danger">Bloklandi</b>
+                          @elseif($item['type'] == 'status_on')
+                            <b class="text-success">Aktivlashtirildi</b>
+                          @endif
+                        </td>
+                        <td>{{ $item['description'] }}</td>
+                        <td class="text-center">{{ $item->creator->name }}</td>
+                        <td class="text-center">{{ $item['created_at'] }}</td>
+                      </tr>
+                    @empty
+                      <tr>
+                        <td colspan="5" class="text-center">Tashrif tarixi mavjud emas.</td>
+                      </tr>
+                    @endforelse
+                  </tbody>
+              </table>
+            </div>
           </div>
         </div>
-        <div class="card notes-wrapper" style="max-height: 372px; overflow-y: auto; overflow-x: hidden;height:372px">
+        <div class="card">
           <div class="card-body">
             <h5 class="card-title">Guruhlar tarixi</h5>
-            <p>Siz tizimga muvaffaqiyatli kirdingiz. Bu yerda sizning asosiy statistikalaringiz ko'rinadi.</p>
+            <div class="table-responsive" style="max-height: 286px; overflow-y: auto; overflow-x: hidden;height:286px">
+              <table class="table table-bordered" style="font-size: 14px;">
+                  <thead>
+                    <tr class="text-center">
+                      <th>#</th>
+                      <th>Guruh</th>
+                      <th>Guruhdagi holati</th>
+                      <th>Guruhga qo'shildi</th>
+                      <th>Guruhga qo'shdi</th>
+                      <th>Guruhdan o'chirildi</th>
+                      <th>Guruhdan o'chirdi</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @forelse ($resGroup['all'] as $item)
+                      <tr>
+                        <td class="text-center">{{ $loop->index+1 }}</td>
+                        <td>
+                          <a href="{{ route('group_show',$item['group_id']) }}">{{ $item['group'] }}</a>
+                        </td>
+                        <td class="text-center">
+                          @if($item['is_active'])
+                          <b class="text-success p-0 m-0">Aktive</b>
+                          @else
+                          <b class="text-danger p-0 m-0">Aktive</b>
+                          @endif
+                        </td>
+                        <td class="text-center">{{ $item['start_data'] }}</td>
+                        <td class="text-center">{{ $item['start_admin'] }}</td>
+                        <td class="text-center">{{ $item['end_data'] }}</td>
+                        <td class="text-center">{{ $item['end_admin'] }}</td>
+                      </tr>
+                    @empty
+                      <tr>
+                        <td class="text-center" colspan="7">Guruhlar mavjud emas.</td>
+                      </tr>
+                    @endforelse
+                  </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </div>
       <div class="col-lg-12">
-        <div class="card notes-wrapper" style="max-height: 330px; overflow-y: auto; overflow-x: hidden;height:330px">
+        <div class="card">
           <div class="card-body">
             <h5 class="card-title">To'lovlar tarixi</h5>
-            <p>Siz tizimga muvaffaqiyatli kirdingiz. Bu yerda sizning asosiy statistikalaringiz ko'rinadi.</p>
+            <div class="table-responsive" style="max-height: 350px; overflow-y: auto; overflow-x: hidden;height:350px">
+              <table class="table table-bordered" style="font-size: 14px;">
+                  <thead>
+                    <tr class="text-center">
+                      <th>#</th>
+                      <th>Guruh</th>
+                      <th>To'lov summasi</th>
+                      <th>To'lov turi</th>
+                      <th>To'lov haqida</th>
+                      <th>To'lov vaqti</th>
+                      <th>Menejer</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @forelse ($user_payments as $item)
+                    <tr>
+                      <td class="text-center">{{ $loop->index+1 }}</td>
+                      <td class="text-center">{{ $item['group'] }}</td>
+                      <td class="text-center">
+                        @if($item['payment_type']=='chegirma')
+                          {{ $item['discount'] }}
+                        @else
+                          {{ $item['amount'] }}
+                        @endif
+                      </td>         
+                      <td class="text-center">
+                        @if($item['payment_type']=='cash' && $item['type']=='payment')
+                          <b class="p-0 m-0 text-success">Naqt to'lov</b>
+                        @elseif($item['payment_type']=='card' && $item['type']=='payment')
+                          <b class="p-0 m-0 text-info">Karta to'lov</b>
+                        @elseif($item['payment_type']=='cash' && $item['type']=='return')
+                          <b class="p-0 m-0 text-danger">Naqt to'lov(Qaytarildi)</b>
+                        @elseif($item['payment_type']=='card' && $item['type']=='return')
+                          <b class="p-0 m-0 text-danger">Karta to'lov(Qaytarildi)</b>
+                        @else
+                          <b class="p-0 m-0 text-warning">Chegirma</b>
+                        @endif
+                      </td>
+                      <td>{{ $item['description'] }}</td>
+                      <td class="text-center">{{ $item['created_at'] }}</td>
+                      <td class="text-center">{{ $item['admin'] }}</td>
+                    </tr>
+                    @empty
+                    <tr>
+                      <td colspan="7" class="text-center">To'lovlar mavjud emas</td>
+                    </tr>
+                    @endforelse
+                  </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </div>
@@ -215,14 +305,14 @@
   </section>
 
 
-<button data-bs-toggle="modal" data-bs-target="#parol_yangilash">sasa</button>
-<div class="modal" id="parol_yangilash" tabindex="-1">
+<!-- CHEGIRMALI TO'LOV -->
+<div class="modal" id="chegirmali_tolov" tabindex="-1">
   <form action="#" method="post">
     @csrf 
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title">Yangilash</h5>
+          <h5 class="modal-title">CHEGIRMALI TO"LOV</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
@@ -236,7 +326,89 @@
     </div>
   </form>
 </div>
-
+<!-- CHEGIRMA ADMIN -->
+<div class="modal" id="admin_chegirma" tabindex="-1">
+  <form action="#" method="post">
+    @csrf 
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Talabaga qo'shimcha chegirma kiritish</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <label for="">Chegirma guruhni tanlang</label>
+          <select name="" required class="form-select">
+            <option value="">Tanlang</option>
+            @foreach ($resGroup['active'] as $item)
+              <option value="{{ $item['group_id'] }}">{{ $item['group'] }}</option>
+            @endforeach
+          </select>
+          <label for="">Chegirma summasi</label>
+          <input type="text" name="" class="form-control" required>
+          <label for="">Chegirma haqida</label>
+          <textarea name="" class="form-control" required></textarea>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Bekor qilish</button>
+          <button type="submit" class="btn btn-primary">Saqlash</button>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+<!-- TO"LOV QILISH -->
+<div class="modal" id="tulovModel" tabindex="-1">
+  <form action="{{ route('add_payment') }}" method="post">
+    @csrf 
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">To'lov qilish</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          @if($payChegirma->isNotEmpty())
+            <div class="w-100 text-center mb-2">Talabaning mavjud chegirmalari</div>
+            <table class="table table-bordered" style="font-size:12px">
+              <thead>
+                <tr class="text-center">
+                  <th>To'lov summasi</th>
+                  <th>Chegirma summasi</th>
+                  <th>Chegirma muddati</th>
+                </tr>
+                @foreach ($payChegirma as $item)
+                  <tr class="text-center">
+                    <td>{{ number_format($item['amount'], 0, '.', ' ') }}</td>
+                    <td>{{ number_format($item['discount'], 0, '.', ' ') }}</td>
+                    <td>{{ $item['end_data']->format('Y-m-d') }}</td>
+                  </tr>
+                @endforeach
+              </thead>
+            </table>
+          @endif
+          <input type="hidden" name="user_id" value="{{ $user['id'] }}">
+          <label for="cash" class="mb-2">Naqt to'lov</label>
+          <input type="text" name="cash" required id="amount2" value="0" class="form-control">
+          <label for="card" class="my-2">Karta to'lov</label>
+          <input type="text" name="card" required id="amount3" value="0" class="form-control">
+          <label for="card" class="my-2">To'lov turi</label>
+          <select name="type" required class="form-select">
+            <option value="payment">To'lov</option>
+            <option value="return">To'lov qaytarish</option>
+          </select>
+          <label for="description" class="my-2">To'lov haqida</label>
+          <textarea name="description" class="form-control">Izohsiz</textarea>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Bekor qilish</button>
+          <button type="submit" class="btn btn-primary">To'lov qilish</button>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+<!-- GURUHGA QO'SHISH -->
 <div class="modal" id="new_group" tabindex="-1">
   <form action="{{ route('add_user_group') }}" method="post">
     @csrf 
@@ -266,7 +438,7 @@
     </div>
   </form>
 </div>
-
+<!-- TAXRIRLASH -->
 <div class="modal" id="user_update" tabindex="-1">
   <form action="{{ route('users_update', $user['id']) }}" method="post">
     @csrf 
