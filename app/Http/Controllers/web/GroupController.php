@@ -4,6 +4,7 @@ namespace App\Http\Controllers\web;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Web\Group\GroupStoreRequest;
+use App\Http\Requests\Web\Group\RemoveStudentRequest;
 use App\Http\Requests\Web\Group\StoreGroupContinueRequest;
 use App\Http\Requests\Web\Visit\UpdateGroupRequest;
 use App\Models\ChegirmaHistory;
@@ -210,6 +211,39 @@ class GroupController extends Controller{
         $group->teacher_bonus = $request->teacher_bonus;
         $group->save();
         return redirect()->back()->with('success', "Guruh muvaffaqiyatli yangilandi");
+    }
+
+    public function remoteUser(RemoveStudentRequest $request){
+        return DB::transaction(function () use ($request) {
+            $userGroup = GroupUser::where('group_id',$request->group_id)->where('user_id',$request->user_id)->where('is_active',true)->first();
+            $userGroup->end_data = now();
+            $userGroup->end_comment = $request->description;
+            $userGroup->end_admin_id = Auth::id();
+            $userGroup->is_active = false;
+            $userGroup->save();
+            $user = User::findOrFail($request->user_id);
+            $user->increment('balance', $request->maxJarima - $request->jarima);
+            $ChegirmaHistory = ChegirmaHistory::where('group_id',$request->group_id)->where('user_id',$request->user_id)->where('status','pending')->first();
+            if($ChegirmaHistory){
+                $ChegirmaHistory->status = 'cancel';
+                $ChegirmaHistory->save();
+            }
+            $group = Group::findOrFail($request->group_id);
+            UserHistory::create([
+                'user_id'     => $request->user_id,
+                'type'        => 'jarima',
+                'description' => "{$group->group_name} guruhdan o'chirildi. Balansdan {$request->jarima} UZS ushlab qilindi.",
+                'created_by'  => Auth::id()
+            ]);
+            $repet = $request->maxJarima - $request->jarima;
+            UserHistory::create([
+                'user_id'     => $request->user_id,
+                'type'        => 'group_delete',
+                'description' => "{$group->group_name} guruhdan o'chirildi. Balansiga {$repet} UZS qaytarildi",
+                'created_by'  => Auth::id()
+            ]);
+            return redirect()->back()->with('success', "Guruh muvaffaqiyatli o'chirildi!");
+        });
     }
 
 }

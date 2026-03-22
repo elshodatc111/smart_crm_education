@@ -125,11 +125,13 @@
                 <i class="bi bi-pencil me-1"></i> Guruhni tahrirlash
               </button>
             </div>
+            @if(auth()->user()->role=='admin' || auth()->role=='director')
             <div class="col-lg-3">
               <button class="btn btn-danger w-100 mt-2" data-bs-toggle="modal" data-bs-target="#trashUser">
                 <i class="bi bi-trash me-1"></i> Guruhdan o'chirish
               </button>
             </div>
+            @endif
             @if(!$group->next_group_id)
             <div class="col-lg-3">
               <button class="btn btn-success w-100 mt-2" data-bs-toggle="modal" data-bs-target="#nextGroup">
@@ -215,27 +217,38 @@
 </div>
 
 <div class="modal" id="trashUser" tabindex="-1">
-  <form action="#" method="post">
+  <form action="{{ route('group_remote_user') }}" method="post">
     @csrf 
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title">Gyruhdan talaba o'chirish</h5>
+          <h5 class="modal-title">Guruhdan talaba o'chirish</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
           <input type="hidden" name="group_id" value="{{ $group['id'] }}">
-          sss
-          
+          <input type="hidden" value="{{ $group->payment->payment+$group->payment->discount }}" name="maxJarima">
+          <label for="user_id" class="mb-2">Guruhdan o'chiriladigan talabani tanlang</label>
+          <select name="user_id" required class="form-select">
+            <option value="">Tanlang...</option>
+            @foreach($activUser as $item)
+              <option value="{{ $item['user_id'] }}">{{ $item->user->name }}</option>
+            @endforeach
+          </select>
+          <label for="jarima" class="my-2">Jarima summasi Max:( {{ number_format($group->payment->payment+$group->payment->discount, 0, '.', ' ') }} UZS )</label>
+          <input type="text" name="jarima" class="form-control" value="0" id='amount' required>
+          <label for="description" class="my-2">Guruhdan o'chirish sababi</label>
+          <textarea name="description" class="form-control" required></textarea>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Bekor qilish</button>
-          <button type="submit" class="btn btn-primary">Saqlash</button>
+          <button type="submit" class="btn btn-primary">Guruhdan o'chirish</button>
         </div>
       </div>
     </div>
   </form>
 </div>
+
 <!-- Guruhni taxrirlash -->
 <div class="modal" id="updateGroup" tabindex="-1">
   <form action="{{ route('group_update') }}" method="post">
@@ -302,6 +315,7 @@
     </div>
   </form>
 </div>
+
 <!-- Guruhni davom ettirish -->
 <div class="modal" id="nextGroup" tabindex="-1">
   <form action="{{ route('group_store_continue') }}" method="post" id="multiStepForm">
@@ -429,6 +443,7 @@
     </div>
   </form>
 </div>
+
 <script>
   let currentStep = 1;
   function changeStep(stepChange) {

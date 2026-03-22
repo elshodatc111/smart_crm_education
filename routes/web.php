@@ -43,6 +43,7 @@ Route::middleware(['auth','role:admin,director,manager,operator'])->group(functi
     Route::post('/group/store', [GroupController::class, 'store'])->name('group_store');
     Route::post('/group/next/store', [GroupController::class, 'storeGroupContinue'])->name('group_store_continue');
     Route::post('/group/update', [GroupController::class, 'groupUpdate'])->name('group_update');
+    Route::post('/group/remote/user', [GroupController::class, 'remoteUser'])->name('group_remote_user');
 
 });
 # Hodimlar
