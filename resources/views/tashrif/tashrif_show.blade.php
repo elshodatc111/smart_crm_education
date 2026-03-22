@@ -328,7 +328,7 @@
 </div>
 <!-- CHEGIRMA ADMIN -->
 <div class="modal" id="admin_chegirma" tabindex="-1">
-  <form action="#" method="post">
+  <form action="{{ route('add_admin_discount') }}" method="post">
     @csrf 
     <div class="modal-dialog">
       <div class="modal-content">
@@ -337,17 +337,18 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <label for="">Chegirma guruhni tanlang</label>
-          <select name="" required class="form-select">
-            <option value="">Tanlang</option>
+          <input type="hidden" name="user_id" value="{{ $user['id'] }}">
+          <label for="group_id" class="mb-2">Chegirma guruhni tanlang</label>
+          <select name="group_id" required class="form-select">
+            <option value="">Tanlang...</option>
             @foreach ($resGroup['active'] as $item)
               <option value="{{ $item['group_id'] }}">{{ $item['group'] }}</option>
             @endforeach
           </select>
-          <label for="">Chegirma summasi</label>
-          <input type="text" name="" class="form-control" required>
-          <label for="">Chegirma haqida</label>
-          <textarea name="" class="form-control" required></textarea>
+          <label for="discount" class="my-2">Chegirma summasi</label>
+          <input type="text" name="discount" class="form-control" id="amount0" required>
+          <label for="description" class="my-2">Chegirma haqida</label>
+          <textarea name="description" class="form-control" required></textarea>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Bekor qilish</button>

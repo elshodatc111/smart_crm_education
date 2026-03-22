@@ -5,6 +5,7 @@ namespace App\Http\Controllers\web;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Web\Visit\ChangeUserStatusRequest;
 use App\Http\Requests\Web\Visit\GroupUserStoreRequest;
+use App\Http\Requests\Web\Visit\StoreAdminDiscountRequest;
 use App\Http\Requests\Web\Visit\StoreVisitRequest;
 use App\Http\Requests\Web\Visit\UpdateUserRequest;
 use App\Http\Requests\Web\Visit\UserPaymentStoreRequest;
@@ -123,6 +124,32 @@ class TashrifController extends Controller{
             $user_payments[$key]['created_at'] = $value->created_at;
         }
         return view('tashrif.tashrif_show',compact('user','notes','history','newGroups','payChegirma','resGroup','user_payments'));
+    }
+
+    public function addAdminDiscount(StoreAdminDiscountRequest $request){
+        DB::transaction(function () use ($request) {
+            $user = User::findOrFail($request->user_id);
+            UserPayment::create([
+                'user_id' => $request->user_id,
+                'type' => 'payment',
+                'group_id' => $request->group_id,
+                'amount' => 0,
+                'discount' => $request->discount,
+                'payment_type' => 'cash',
+                'status' => 'success',
+                'description' => $request->description,
+                'admin_id' => Auth::id(),
+            ]);
+            $group = Group::findOrFail($request->group_id)->group_name ?? 'Noma’lum guruh';
+            UserHistory::create([
+                'user_id' => $request->user_id,
+                'type' => 'discont',
+                'description' => "CHEGIRMA:".$request->discount.", GURUH: ".$group.", IZOH: ".$request->description,
+                'created_by' => Auth::id()
+            ]);            
+            $user->increment('balance', $request->discount);
+        });
+        return redirect()->back()->with('success', 'Chegirma muvaffaqiyatli qo\'shildi!');
     }
     
     public function addGroup(GroupUserStoreRequest $request){
