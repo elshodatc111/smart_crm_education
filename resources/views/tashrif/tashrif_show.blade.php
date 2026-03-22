@@ -15,7 +15,7 @@
     <div class="row">
       <div class="col-12 mb-2 d-flex flex-wrap gap-2">
         <button class="btn btn-success my-2" data-bs-toggle="modal" data-bs-target="#tulovModel"> <i class="bi bi-cash-coin"></i> TO'LOV QILISH </button>
-        <button class="btn btn-primary my-2" data-bs-toggle="modal" data-bs-target="#chegirmali_tolov"> <i class="bi bi-percent"></i> CHEGIRMALI TO'LOV </button>
+        <button class="btn btn-primary my-2" data-bs-toggle="modal" data-bs-target="#chegirmali_tolov"> <i class="bi bi-percent"></i> Maxsus to'lov </button>
         @if(auth()->user()->role=='admin' || auth()->user()->role=='director')
           <button class="btn btn-warning text-dark my-2" data-bs-toggle="modal" data-bs-target="#admin_chegirma"> <i class="bi bi-tag"></i> CHEGIRMA </button>
         @endif
@@ -307,20 +307,35 @@
 
 <!-- CHEGIRMALI TO'LOV -->
 <div class="modal" id="chegirmali_tolov" tabindex="-1">
-  <form action="#" method="post">
+  <form action="{{ route('add_spis_payment') }}" method="post">
     @csrf 
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title">CHEGIRMALI TO"LOV</h5>
+          <h5 class="modal-title">Maxsus to'lov</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          sasa
+          <input type="hidden" name="user_id" value="{{ $user['id'] }}">
+          <label for="id" class="mb-2">Maxsus to'lovni tanlang</label>
+          <select name="id" class="form-select">
+            <option value="">Tanlang...</option>
+            @foreach ($spisPayment as $item)
+              <option value="{{ $item['id'] }}">
+                {{ $item['description']."/ To'lov: ".number_format($item['amount'], 0, '.', ' ')." UZS / Chegirma: ".number_format($item['discount'], 0, '.', ' ')." UZS" }}
+              </option>
+            @endforeach
+          </select>
+          <label for="cash" class="my-2">Naqt to'lov</label>
+          <input type="text" name="cash" required class="form-control" id="amount">
+          <label for="card" class="my-2">Karta to'lov</label>
+          <input type="text" name="card" required class="form-control" id="amount0">
+          <label for="description" class="my-2">To'lov haqida</label>
+          <textarea type="text" name="description" required class="form-control"></textarea>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Bekor qilish</button>
-          <button type="submit" class="btn btn-primary">Saqlash</button>
+          <button type="submit" class="btn btn-primary">To'lovni saqlash</button>
         </div>
       </div>
     </div>
@@ -358,7 +373,7 @@
     </div>
   </form>
 </div>
-<!-- TO"LOV QILISH -->
+<!-- TO"LOV QILISH --> 
 <div class="modal" id="tulovModel" tabindex="-1">
   <form action="{{ route('add_payment') }}" method="post">
     @csrf 

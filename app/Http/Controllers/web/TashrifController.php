@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Web\Visit\ChangeUserStatusRequest;
 use App\Http\Requests\Web\Visit\GroupUserStoreRequest;
 use App\Http\Requests\Web\Visit\StoreAdminDiscountRequest;
+use App\Http\Requests\Web\Visit\StoreSpecialPaymentRequest;
 use App\Http\Requests\Web\Visit\StoreVisitRequest;
 use App\Http\Requests\Web\Visit\UpdateUserRequest;
 use App\Http\Requests\Web\Visit\UserPaymentStoreRequest;
@@ -15,12 +16,14 @@ use App\Models\GroupUser;
 use App\Models\Kassa;
 use App\Models\Note;
 use App\Models\PaymentSetting;
+use App\Models\PaymentSpecial;
 use App\Models\User;
 use App\Models\UserHistory;
 use App\Models\UserPayment;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 use Carbon\Carbon;
 
 class TashrifController extends Controller{
@@ -123,7 +126,92 @@ class TashrifController extends Controller{
             $user_payments[$key]['admin'] = $value->admin->name;
             $user_payments[$key]['created_at'] = $value->created_at;
         }
-        return view('tashrif.tashrif_show',compact('user','notes','history','newGroups','payChegirma','resGroup','user_payments'));
+        $spisPayment = PaymentSpecial::get();
+        return view('tashrif.tashrif_show',compact('user','notes','history','newGroups','payChegirma','resGroup','user_payments','spisPayment'));
+    }
+
+    public function SpisPayment(StoreSpecialPaymentRequest $request){
+        /*
+            "user_id" => "19"
+            "id" => "2"
+            "cash" => "1500000"
+            "card" => "400000"
+            "description" => "Test uchun"
+        */
+        DB::transaction(function () use ($request) {
+            $pay = (float)$request->cash + (float)$request->card;
+            $spis = PaymentSpecial::findOrFail($request->id);
+            $user = User::findOrFail($request->user_id);
+            $chegirma = $spis->discount;
+            $kassa = Kassa::first();
+            $total_needed = (float)$spis->amount;
+            if ($total_needed != $pay) {
+                throw ValidationException::withMessages([
+                    'cash' => "To'lov summasi mos kelmadi. Kerakli summa: " . number_format($total_needed, 0, '.', ' ') . " UZS. Siz kiritgan jami summa: " . number_format($pay, 0, '.', ' ') . " UZS",
+                ]);
+            }
+            if($request->cash>0){
+                UserPayment::create([
+                    'user_id' => $request->user_id,
+                    'group_id' => null,
+                    'type' => 'payment',
+                    'amount' => $request->cash,
+                    'discount' => 0,
+                    'payment_type' => 'cash',
+                    'status' => 'success',
+                    'description' => $request->description,
+                    'admin_id' => Auth::id(),
+                ]);
+                $kassa->increment('cash', $request->cash);
+                UserHistory::create([
+                    'user_id' => $request->user_id,
+                    'type' => 'payment_cash',
+                    'description' => $request->cash.' naqt to\'lov qildi',
+                    'created_by' => Auth::id()
+                ]);
+            }
+            if($request->card>0){
+                UserPayment::create([
+                    'user_id' => $request->user_id,
+                    'group_id' => null,
+                    'type' => 'payment',
+                    'amount' => $request->card,
+                    'discount' => 0,
+                    'payment_type' => 'card',
+                    'status' => 'success',
+                    'description' => $request->description,
+                    'admin_id' => Auth::id(),
+                ]);
+                $kassa->increment('card', $request->card);
+                UserHistory::create([
+                    'user_id' => $request->user_id,
+                    'type' => 'payment_card',
+                    'description' => $request->card.' Karta to\'lov qildi',
+                    'created_by' => Auth::id()
+                ]);
+            }
+            $user->increment('balance', $pay);
+            UserPayment::create([
+                'user_id' => $request->user_id,
+                'group_id' => null,
+                'type' => 'payment',
+                'amount' => 0,
+                'discount' => $chegirma,
+                'payment_type' => 'cash',
+                'status' => 'success',
+                'description' => $request->description,
+                'admin_id' => Auth::id(),
+            ]);
+            UserHistory::create([
+                'user_id' => $request->user_id,
+                'type' => 'discont',
+                'description' => $pay." to'lov uchun maxsus ".$chegirma.' chegirma',
+                'created_by' => Auth::id()
+            ]);
+            $user->increment('balance', $chegirma);
+
+        });
+        return redirect()->back()->with('success', 'To\'lov muvaffaqiyatli qabul qilindi.');
     }
 
     public function addAdminDiscount(StoreAdminDiscountRequest $request){
@@ -138,7 +226,7 @@ class TashrifController extends Controller{
                 'payment_type' => 'cash',
                 'status' => 'success',
                 'description' => $request->description,
-                'admin_id' => Auth::id(),
+                'admin_id' => Auth::id(), 
             ]);
             $group = Group::findOrFail($request->group_id)->group_name ?? 'Noma’lum guruh';
             UserHistory::create([
@@ -314,8 +402,7 @@ class TashrifController extends Controller{
                         'description' => $request->cash.' naqt to\'lov qaytarildi',
                         'created_by' => Auth::id()
                     ]);
-                }
-                
+                }                
             }
             if($request->card>0){
                 UserPayment::create([
