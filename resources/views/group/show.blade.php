@@ -58,11 +58,11 @@
               <table class="table table-bordered">
                 <tr>
                   <th>Guruh narxi</th>
-                  <td style="text-align: right">{{ number_format($group->payment->payment, 0, '.', ' ') }} UZS</td>
+                  <td style="text-align: right">{{ number_format($group->payment->payment+$group->payment->discount, 0, '.', ' ') }} UZS</td>
                 </tr>
                 <tr>
                 <tr>
-                  <th>Chegirma summasi</th>
+                  <th>Chegirma summasi ({{ number_format($group->payment->payment, 0, '.', ' ') }})</th>
                   <td style="text-align: right">{{ number_format($group->payment->discount, 0, '.', ' ') }} UZS</td>
                 </tr>
                 <tr>
@@ -213,27 +213,7 @@
     </div>
   </form>
 </div>
-<div class="modal" id="updateGroup" tabindex="-1">
-  <form action="#" method="post">
-    @csrf 
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Guruhni taxrirlash</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <input type="hidden" name="group_id" value="{{ $group['id'] }}">
-          sasa
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Bekor qilish</button>
-          <button type="submit" class="btn btn-primary">Saqlash</button>
-        </div>
-      </div>
-    </div>
-  </form>
-</div>
+
 <div class="modal" id="trashUser" tabindex="-1">
   <form action="#" method="post">
     @csrf 
@@ -245,7 +225,8 @@
         </div>
         <div class="modal-body">
           <input type="hidden" name="group_id" value="{{ $group['id'] }}">
-          sasa
+          sss
+          
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Bekor qilish</button>
@@ -255,7 +236,73 @@
     </div>
   </form>
 </div>
-
+<!-- Guruhni taxrirlash -->
+<div class="modal" id="updateGroup" tabindex="-1">
+  <form action="{{ route('group_update') }}" method="post">
+    @csrf 
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Guruhni taxrirlash</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" name="group_id" value="{{ $group['id'] }}">          
+          <label class="mb-2" for="group_name">Yangi guruh nomi</label>
+          <input type="text" name="group_name" value="{{ $group['group_name'] }}" class="form-control" required>
+          <div class="row">
+              <div class="col-12">
+                <label class="my-2" for="teacher_id">O'qituvchi</label>
+                <select name="teacher_id" class="form-control" required>
+                  <option value="">Tanlang...</option>
+                  @foreach ($teacher as $item)
+                    <option value="{{ $item['id'] }}" @selected($item['id'] == $group['teacher_id'])>
+                      {{ $item['name'] }}
+                    </option>
+                  @endforeach
+                </select>
+              </div>
+              <div class="col-6">
+                <label class="my-2" for="cours_id">Kurs</label>
+                <select name="cours_id" class="form-control" required>
+                  <option value="">Tanlang...</option>
+                  @foreach ($cours as $item)
+                    <option value="{{ $item['id'] }}" @selected($item['id'] == $group['cours_id'])>
+                      {{ $item['cours_name'] }}
+                    </option>
+                  @endforeach 
+                </select>
+              </div>
+              <div class="col-6">
+                <label class="my-2" for="room_id">Dars xonasi</label>
+                <select name="room_id" class="form-control" required>
+                  <option value="">Tanlang...</option>
+                  @foreach ($rooms as $item)
+                    <option value="{{ $item['id'] }}" @selected($item['id'] == $group['room_id'])>
+                      {{ $item['name'] }}
+                    </option>
+                  @endforeach
+                </select>
+              </div>
+              <div class="col-6">
+                <label class="my-2" for="teacher_pay">O'qituvchiga to'lov</label>
+                <input type="text" name="teacher_pay" id="amount0" value="{{ $group['teacher_pay'] }}" required class="form-control">
+              </div>
+              <div class="col-6">
+                <label class="my-2" for="teacher_bonus">O'qituvchiga bonus</label>
+                <input type="text" name="teacher_bonus" id="amount1" value="{{ $group['teacher_bonus'] }}" required class="form-control">
+              </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Bekor qilish</button>
+          <button type="submit" class="btn btn-primary">Saqlash</button>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+<!-- Guruhni davom ettirish -->
 <div class="modal" id="nextGroup" tabindex="-1">
   <form action="{{ route('group_store_continue') }}" method="post" id="multiStepForm">
     @csrf 
@@ -300,7 +347,7 @@
                   <option value="">Tanlang...</option>
                   @foreach ($pay_setting as $item)
                     <option value="{{ $item['id'] }}" @selected($item['id'] == $group['payment_id'])>
-                      To'lov: {{ $item['payment'] }} | Chegirma: {{ $item['discount'] }}
+                      {{ number_format($item['payment']+$item['discount'],0,'.',' ') }} UZS
                     </option>
                   @endforeach
                 </select>

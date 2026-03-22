@@ -131,9 +131,7 @@
                 @foreach ($form['paymarts'] as $item)
                   <option value="{{ $item['id'] }}"
                     {{ old('payment_id')==$item['id']?'selected':'' }}>
-                    To'lov: {{ number_format($item['payment'],0,'.',' ') }} UZS,
-                    Chegirma: {{ number_format($item['discount'],0,'.',' ') }} UZS,
-                    Muddat: {{ $item['discount_day'] }} kun
+                    {{ number_format($item['payment']+$item['discount'],0,'.',' ') }} UZS
                   </option>
                 @endforeach
               </select>

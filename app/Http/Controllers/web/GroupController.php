@@ -5,6 +5,7 @@ namespace App\Http\Controllers\web;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Web\Group\GroupStoreRequest;
 use App\Http\Requests\Web\Group\StoreGroupContinueRequest;
+use App\Http\Requests\Web\Visit\UpdateGroupRequest;
 use App\Models\ChegirmaHistory;
 use App\Models\Classroom;
 use App\Models\Cours;
@@ -197,6 +198,18 @@ class GroupController extends Controller{
             Log::error("Guruh ko'chirishda xato: " . $e->getMessage());
             return redirect()->back()->withInput()->with('error', "Xatolik: " . $e->getMessage());
         }
+    }
+
+    public function groupUpdate(UpdateGroupRequest $request){
+        $group = Group::findOrFail($request->group_id);
+        $group->group_name = $request->group_name;
+        $group->teacher_id = $request->teacher_id;
+        $group->cours_id = $request->cours_id;
+        $group->room_id = $request->room_id;
+        $group->teacher_pay = $request->teacher_pay;
+        $group->teacher_bonus = $request->teacher_bonus;
+        $group->save();
+        return redirect()->back()->with('success', "Guruh muvaffaqiyatli yangilandi");
     }
 
 }

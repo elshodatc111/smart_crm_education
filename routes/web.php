@@ -42,6 +42,7 @@ Route::middleware(['auth','role:admin,director,manager,operator'])->group(functi
     Route::get('/group/show/{id}', [GroupController::class, 'show'])->name('group_show');
     Route::post('/group/store', [GroupController::class, 'store'])->name('group_store');
     Route::post('/group/next/store', [GroupController::class, 'storeGroupContinue'])->name('group_store_continue');
+    Route::post('/group/update', [GroupController::class, 'groupUpdate'])->name('group_update');
 
 });
 # Hodimlar
