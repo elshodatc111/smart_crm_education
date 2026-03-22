@@ -4,6 +4,8 @@ namespace App\Http\Controllers\web;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Web\Group\GroupStoreRequest;
+use App\Http\Requests\Web\Group\StoreGroupContinueRequest;
+use App\Models\ChegirmaHistory;
 use App\Models\Classroom;
 use App\Models\Cours;
 use App\Models\DamOlishKuni;
@@ -12,10 +14,12 @@ use App\Models\GroupData;
 use App\Models\GroupUser;
 use App\Models\PaymentSetting;
 use App\Models\User;
+use App\Models\UserHistory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 
 class GroupController extends Controller{
 
@@ -97,7 +101,102 @@ class GroupController extends Controller{
     }
 
     public function show($id){
-        return view('group.show');
+        $group = Group::findOrFail($id);
+        $cours = Cours::get();
+        $rooms = Classroom::get();
+        $pay_setting = PaymentSetting::get();
+        $teacher = User::where('is_active',true)->where('role','teacher')->get();
+        $activUser = GroupUser::where('group_id',$id)->where('is_active',true)->get();
+        
+        return view('group.show',compact('group','cours','rooms','pay_setting','teacher','activUser'));
+    }
+
+    public function storeGroupContinue(StoreGroupContinueRequest $request){
+        try {
+            return DB::transaction(function () use ($request) {
+                $newGroup = Group::create([
+                    'cours_id'      => $request->cours_id,
+                    'room_id'       => $request->room_id,
+                    'teacher_id'    => $request->teacher_id,
+                    'payment_id'    => $request->payment_id,
+                    'group_name'    => $request->group_name,
+                    'lesson_count'  => $request->lesson_count,
+                    'group_type'    => $request->group_type,
+                    'lesson_time'   => $request->lesson_time,
+                    'teacher_pay'   => $request->teacher_pay,
+                    'teacher_bonus' => $request->teacher_bonus,
+                    'start_lesson'  => Carbon::parse($request->start_lesson), // Obyektga aylantiramiz
+                    'admin_id'      => Auth::id(),
+                    'status'        => 'active',
+                ]);
+                $daysMap = match ($request->group_type) {'toq'  => [1, 3, 5],'juft' => [2, 4, 6],'all'  => [1, 2, 3, 4, 5, 6],};
+                $start = Carbon::parse($request->start_lesson);
+                $lessons = [];
+                $count = 0;
+                while ($count < $request->lesson_count) {
+                    $isHoliday = DamOlishKuni::whereDate('data', $start->toDateString())->exists();
+                    if (in_array($start->dayOfWeekIso, $daysMap) && !$isHoliday) {
+                        $lessons[] = [
+                            'group_id'   => $newGroup->id,
+                            'data'       => $start->toDateString(),
+                            'time'       => $request->lesson_time,
+                            'created_at' => now(),
+                            'updated_at' => now(),
+                        ];
+                        $count++;
+                    }$start->addDay();
+                }
+                GroupData::insert($lessons);
+                $lastLesson = end($lessons);
+                $newGroup->end_lesson = $lastLesson['data'];
+                $newGroup->save();
+                $oldGroup = Group::findOrFail($request->group_id);
+                $oldGroup->next_group_id = $newGroup->id;
+                $oldGroup->save();
+                $paymentSetting = PaymentSetting::findOrFail($newGroup->payment_id);
+                $totalDebit = $paymentSetting->payment + $paymentSetting->discount;
+                if ($request->has('student_ids') && is_array($request->student_ids)) {
+                    foreach ($request->student_ids as $studentId) {
+                        $userGroup = GroupUser::create([
+                            'group_id'       => $newGroup->id,
+                            'user_id'        => $studentId,
+                            'is_active'      => true,
+                            'start_data'     => now()->format('Y-m-d'),
+                            'start_comment'  => "{$oldGroup->group_name} guruhidan davom ettirildi.",
+                            'start_admin_id' => Auth::id(),
+                        ]);
+                        $user = User::findOrFail($studentId);
+                        $user->decrement('balance', $totalDebit);
+                        UserHistory::create([
+                            'user_id'     => $studentId,
+                            'type'        => 'group_add',
+                            'description' => "{$newGroup->group_name} guruhiga o'tdi. Balansdan {$totalDebit} UZS yechildi.",
+                            'created_by'  => Auth::id()
+                        ]);
+                        if ($paymentSetting->discount > 0) {
+                            $discountDays = (int) $paymentSetting->discount_day;
+                            $chegirmaDeadline = $newGroup->start_lesson->copy()->addDays($discountDays - 1);
+                            if ($chegirmaDeadline->gte(now())) {
+                                ChegirmaHistory::create([
+                                    'group_id'      => $newGroup->id,
+                                    'user_id'       => $studentId,
+                                    'group_user_id' => $userGroup->id,
+                                    'start_data'    => $newGroup->start_lesson->toDateString(),
+                                    'end_data'      => $chegirmaDeadline->toDateString(),
+                                    'amount'        => $paymentSetting->payment,
+                                    'discount'      => $paymentSetting->discount,
+                                    'status'        => 'pending',
+                                ]);
+                            }
+                        }
+                    }
+                }
+                return redirect()->route('group_show', $newGroup->id)->with('success', "Guruh muvaffaqiyatli davom ettirildi!");
+            });
+        } catch (\Exception $e) {
+            Log::error("Guruh ko'chirishda xato: " . $e->getMessage());
+            return redirect()->back()->withInput()->with('error', "Xatolik: " . $e->getMessage());
+        }
     }
 
 }
