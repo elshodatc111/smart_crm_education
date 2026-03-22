@@ -12,6 +12,7 @@ use App\Models\CoursTest;
 use App\Models\CoursVideo;
 use App\Models\KassaSetting;
 use App\Models\PaymentSetting;
+use App\Models\PaymentSpecial;
 use App\Models\SettingRegion;
 use App\Models\SettingSms;
 use Illuminate\Support\Facades\Auth;
@@ -24,7 +25,8 @@ class SettingController extends Controller{
         $paymart_setting = PaymentSetting::where('discount_day','!=','99999')->get();
         $paymart_maxsus = PaymentSetting::where('discount_day','99999')->get();
         $kassa_setting = KassaSetting::getSettings();
-        return view('setting.payment',compact('paymart_setting','paymart_maxsus','kassa_setting'));
+        $maxsus = PaymentSpecial::get();
+        return view('setting.payment',compact('paymart_setting','paymart_maxsus','kassa_setting','maxsus'));
     }
 
     public function updateSettingUpdate(Request $request){
@@ -39,10 +41,26 @@ class SettingController extends Controller{
         return back()->with('success', 'Sozlamalar muvaffaqiyatli saqlandi ✅');
     }
 
+    public function destroySpisPayment($id){
+        $payment = PaymentSpecial::findOrFail($id);
+        $payment->delete();
+        return back()->with('success', "To'lov muvaffaqiyatli o‘chirildi");
+    }
+
     public function destroyPayment($id){
         $payment = PaymentSetting::findOrFail($id);
         $payment->delete();
         return back()->with('success', "To'lov muvaffaqiyatli o‘chirildi");
+    }
+
+    public function storeSpisPayment(Request $request){
+        PaymentSpecial::create([
+            'amount'      => str_replace(' ', '', $request->amount),
+            'discount'    => str_replace(' ', '', $request->discount),
+            'description' => $request->description,
+            'admin_id'    => Auth::id(),
+        ]);
+        return redirect()->back()->with('success', "Maxsus to'lov muvaffaqiyatli saqlandi.");
     }
 
     public function storePayment(Request $request){
