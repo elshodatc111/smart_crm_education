@@ -68,6 +68,12 @@
   </ul>
 </li>
 
+<li class="nav-item">
+  <a class="nav-link {{ request()->routeIs(['upload_view','upload_view']) ? '' : 'collapsed' }}" href="{{ route('upload_view') }}">
+    <i class="bi bi-house-heart"></i>
+    <span>Upload</span>
+  </a>
+</li>
 
 <li class="nav-item">
   <a class="nav-link collapsed" data-bs-target="#davomad-nav" data-bs-toggle="collapse" href="#">

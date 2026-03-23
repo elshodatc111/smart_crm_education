@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\UploadController;
 use App\Http\Controllers\web\{
     AuthController,
     BalansController,
@@ -89,4 +90,8 @@ Route::middleware(['auth','role:admin,director'])->group(function () {
     Route::post('/setting/kassa-settings', [SettingController::class, 'updateSettingUpdate'])->name('kassa_settings_update');
     Route::get('/setting/damolish', [DamOlishController::class, 'damOlish'])->name('setting_dam_olish');
     Route::post('/setting/damolish/create', [DamOlishController::class, 'store'])->name('setting_dam_olish_store');
+
+    Route::get('/upload', [UploadController::class, 'uploadViwe'])->name('upload_view');
+    Route::post('/upload/users', [UploadController::class, 'uploadUsers'])->name('upload_users');
+
 });
