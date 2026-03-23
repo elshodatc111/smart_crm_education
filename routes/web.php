@@ -60,8 +60,11 @@ Route::middleware(['auth','role:admin,director'])->group(function () {
     Route::post('/balans/exson', [BalansController::class, 'exsonChiqim'])->name('balans_exson');
     # Hodimlar
     Route::get('/emploes', [EmploesController::class, 'emploes'])->name('emploes');
-    Route::get('/emploes/show/{id}', [EmploesController::class, 'emploesShow'])->name('emploes_show');
     Route::post('/emploes/store', [EmploesController::class, 'store'])->name('emploes_store');
+    Route::get('/emploes/show/{id}', [EmploesController::class, 'emploesShow'])->name('emploes_show');
+    Route::post('/emploe/update-password', [EmploesController::class, 'updatePassword'])->name('emploes_updatePassword');
+    Route::post('/emploe/toggle-status', [EmploesController::class, 'toggleStatus'])->name('emploes_toggleStatus');
+    Route::post('/emploe/update', [EmploesController::class, 'update'])->name('emploes_update');
 });
 # Sozlamalar
 Route::middleware(['auth','role:admin,director'])->group(function () {
