@@ -45,6 +45,8 @@ Route::middleware(['auth','role:admin,director,manager,operator'])->group(functi
     Route::post('/group/next/store', [GroupController::class, 'storeGroupContinue'])->name('group_store_continue');
     Route::post('/group/update', [GroupController::class, 'groupUpdate'])->name('group_update');
     Route::post('/group/remote/user', [GroupController::class, 'remoteUser'])->name('group_remote_user');
+    Route::post('/group/debit/send/message', [GroupController::class, 'debitSendMessage'])->name('group_debit_send_message');
+    Route::post('/group/davomad', [GroupController::class, 'davomad'])->name('attendance_store');
 
 });
 # Hodimlar

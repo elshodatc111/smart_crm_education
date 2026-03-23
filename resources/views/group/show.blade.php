@@ -115,11 +115,13 @@
             </div>
           </div>
           <div class="row">
+            @if($debitUserStatus>0)
             <div class="col-lg-3">
               <button class="btn btn-warning w-100 mt-2 text-white" data-bs-toggle="modal" data-bs-target="#sendDebetMessage">
                 <i class="bi bi-envelope me-1"></i> Qarzdorlarga SMS
               </button>
             </div>
+            @endif
             <div class="col-lg-3">
               <button class="btn btn-info w-100 mt-2 text-white" data-bs-toggle="modal" data-bs-target="#updateGroup">
                 <i class="bi bi-pencil me-1"></i> Guruhni tahrirlash
@@ -136,6 +138,13 @@
             <div class="col-lg-3">
               <button class="btn btn-success w-100 mt-2" data-bs-toggle="modal" data-bs-target="#nextGroup">
                 <i class="bi bi-play-circle me-1"></i> Guruhni davom ettirish
+              </button>
+            </div>
+            @endif
+            @if(auth()->user()->role=='admin')
+            <div class="col-lg-3">
+              <button class="btn btn-success w-100 mt-2" data-bs-toggle="modal" data-bs-target="#studentDavomad">
+                <i class="bi bi-play-circle me-1"></i> Davomad olish
               </button>
             </div>
             @endif
@@ -193,9 +202,59 @@
     </div>
   </section>
 
+<div class="modal fade" id="studentDavomad" tabindex="-1">
+  <form action="{{ route('attendance_store') }}" method="post">
+    @csrf 
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Davomad: {{ date('d.m.Y') }}</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" name="group_id" value="{{ $group->id }}">
+          <table class="table align-middle">
+            <thead class="table-light">
+              <tr>
+                <th>Talaba ismi</th>
+                <th class="text-center">Holatni belgilang</th>
+              </tr>
+            </thead>
+            <tbody>
+              @foreach ($activDavomad as $item)
+                @php
+                  $currentStatus = $item->todayAttendance ? $item->todayAttendance->status : 'kelmadi';
+                @endphp
+                <tr>
+                  <td>
+                    <strong>{{ $item->user->name }}</strong>
+                    <input type="hidden" name="attendances[{{ $loop->index }}][user_id]" value="{{ $item->user_id }}">
+                  </td>
+                  <td class="text-center">
+                    <div class="btn-group w-100" role="group">
+                      <input type="radio" class="btn-check" name="attendances[{{ $loop->index }}][status]" id="k_{{ $item->user_id }}" value="keldi" {{ $currentStatus == 'keldi' ? 'checked' : '' }}>
+                      <label class="btn btn-outline-success" for="k_{{ $item->user_id }}">Keldi</label>
+                      <input type="radio" class="btn-check" name="attendances[{{ $loop->index }}][status]" id="km_{{ $item->user_id }}" value="kelmadi" {{ $currentStatus == 'kelmadi' ? 'checked' : '' }}>
+                      <label class="btn btn-outline-danger" for="km_{{ $item->user_id }}">Kelmadi</label>
+                      <input type="radio" class="btn-check" name="attendances[{{ $loop->index }}][status]" id="s_{{ $item->user_id }}" value="sababli" {{ $currentStatus == 'sababli' ? 'checked' : '' }}>
+                      <label class="btn btn-outline-warning" for="s_{{ $item->user_id }}">Sababli</label>                      
+                    </div>
+                  </td>
+                </tr>
+              @endforeach
+            </tbody>
+          </table>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary w-100">Davomadni saqlash</button>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
 
 <div class="modal" id="sendDebetMessage" tabindex="-1">
-  <form action="#" method="post">
+  <form action="{{ route('group_debit_send_message') }}" method="post">
     @csrf 
     <div class="modal-dialog">
       <div class="modal-content">
@@ -205,11 +264,26 @@
         </div>
         <div class="modal-body">
           <input type="hidden" name="group_id" value="{{ $group['id'] }}">
-          sasa
+          <table class="table table-bordered">
+            <tr class="text-center">
+              <td>SMS</td>
+              <td>Talaba</td>
+              <td>Qarzdorlik</td>
+            </tr>
+            @foreach ($debitUser as $item)
+              <tr>
+                <td class="text-center">
+                  <input type="checkbox" name="student_ids[]" value="{{ $item['user_id'] }}" checked class="form-checkbox">
+                </td>
+                <td>{{ $item['name'] }} </td>
+                <td> {{ number_format($item['balance'], 0, '.', ' ') }}</td>
+              </tr>
+            @endforeach
+          </table>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Bekor qilish</button>
-          <button type="submit" class="btn btn-primary">Saqlash</button>
+          <button type="submit" class="btn btn-primary">SMS yuborish</button>
         </div>
       </div>
     </div>
@@ -220,7 +294,7 @@
   <form action="{{ route('group_remote_user') }}" method="post">
     @csrf 
     <div class="modal-dialog">
-      <div class="modal-content">
+      <div class="modal-content"> 
         <div class="modal-header">
           <h5 class="modal-title">Guruhdan talaba o'chirish</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>

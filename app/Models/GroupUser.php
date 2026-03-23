@@ -25,6 +25,9 @@ class GroupUser extends Model{
     public function group(){
         return $this->belongsTo(Group::class, 'group_id');
     }
+    public function todayAttendance(){
+        return $this->hasOne(UserDavomad::class, 'user_id', 'user_id')->where('group_id', $this->group_id)->whereDate('date', now()->toDateString());
+    }
     public function user(){
         return $this->belongsTo(User::class, 'user_id');
     }

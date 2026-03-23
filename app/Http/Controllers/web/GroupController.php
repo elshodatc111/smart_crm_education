@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\web;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Web\Group\AttendanceStoreRequest;
 use App\Http\Requests\Web\Group\GroupStoreRequest;
 use App\Http\Requests\Web\Group\RemoveStudentRequest;
+use App\Http\Requests\Web\Group\SendDebitSmsRequest;
 use App\Http\Requests\Web\Group\StoreGroupContinueRequest;
 use App\Http\Requests\Web\Visit\UpdateGroupRequest;
 use App\Models\ChegirmaHistory;
@@ -16,6 +18,7 @@ use App\Models\GroupData;
 use App\Models\GroupUser;
 use App\Models\PaymentSetting;
 use App\Models\User;
+use App\Models\UserDavomad;
 use App\Models\UserHistory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -109,8 +112,30 @@ class GroupController extends Controller{
         $pay_setting = PaymentSetting::get();
         $teacher = User::where('is_active',true)->where('role','teacher')->get();
         $activUser = GroupUser::where('group_id',$id)->where('is_active',true)->get();
+        $debitUser = [];
+        $activDavomad = GroupUser::with(['user', 'todayAttendance'])->where('group_id', $id)->where('is_active', true)->get();
+        foreach ($activUser as $key => $value) {
+            if($value->user->balance<0){
+                $debitUser[$key]['user_id'] = $value->user->id;
+                $debitUser[$key]['name'] = $value->user->name;
+                $debitUser[$key]['balance'] = $value->user->balance;
+            }
+        }
+        $debitUserStatus = count($debitUser);
         
-        return view('group.show',compact('group','cours','rooms','pay_setting','teacher','activUser'));
+        return view('group.show',compact('group','cours','rooms','pay_setting','teacher','activUser','debitUser','debitUserStatus','activDavomad'));
+    }
+
+    public function debitSendMessage(SendDebitSmsRequest $request){
+        $groupId = $request->group_id;
+        $selectedStudents = $request->student_ids; // Bu tanlangan user_id larning massivi
+        try {
+            // SMS yuborish logikasi shu yerda bo'ladi
+            // Masalan: foreach ($selectedStudents as $id) { ... }
+            return back()->with('success', count($selectedStudents) . " ta talabaga SMS yuborish navbatga qo'yildi.");            
+        } catch (\Exception $e) {
+            return back()->withErrors(['error' => 'SMS yuborishda texnik xatolik: ' . $e->getMessage()]);
+        }
     }
 
     public function storeGroupContinue(StoreGroupContinueRequest $request){
@@ -244,6 +269,31 @@ class GroupController extends Controller{
             ]);
             return redirect()->back()->with('success', "Guruh muvaffaqiyatli o'chirildi!");
         });
+    }
+
+    public function davomad(AttendanceStoreRequest $request){
+        try {
+            DB::transaction(function () use ($request) {
+                $groupId = $request->group_id;
+                $today = now()->toDateString();
+                foreach ($request->attendances as $data) {
+                    UserDavomad::updateOrCreate(
+                        [
+                            'group_id' => $groupId,
+                            'user_id'  => $data['user_id'],
+                            'date'     => $today,
+                        ],
+                        [
+                            'status'     => $data['status'],
+                            'created_by' => Auth::id(),
+                        ]
+                    );
+                }
+            });
+            return back()->with('success', 'Bugun uchun davomad muvaffaqiyatli saqlandi!');
+        } catch (\Exception $e) {
+            return back()->withErrors(['error' => 'Xatolik: ' . $e->getMessage()]);
+        }
     }
 
 }
