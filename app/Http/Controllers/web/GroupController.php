@@ -104,7 +104,16 @@ class GroupController extends Controller{
         });
         return back()->with('success', 'Guruh va dars jadvali yaratildi ✅');
     }
-
+    public function showAttendance($groupId) {
+        $groupDays = GroupData::where('group_id', $groupId)->orderBy('data', 'asc')->get();
+        $groupUsers = GroupUser::with('user')->where('group_id', $groupId)->get();
+        $allAttendances = UserDavomad::where('group_id', $groupId)->get()->keyBy(function($item) {return $item->user_id . '_' . $item->date->format('Y-m-d');});
+        return [
+            'groupDays' => $groupDays,
+            'groupUsers' => $groupUsers,
+            'allAttendances' => $allAttendances
+        ];
+    }
     public function show($id){
         $group = Group::findOrFail($id);
         $cours = Cours::get();
@@ -122,8 +131,9 @@ class GroupController extends Controller{
             }
         }
         $debitUserStatus = count($debitUser);
-        
-        return view('group.show',compact('group','cours','rooms','pay_setting','teacher','activUser','debitUser','debitUserStatus','activDavomad'));
+        $davomadTable = $this->showAttendance($id);
+        $userHistory = GroupUser::where('group_id',$id)->get();
+        return view('group.show',compact('group','cours','rooms','pay_setting','teacher','activUser','debitUser','debitUserStatus','activDavomad','davomadTable','userHistory'));
     }
 
     public function debitSendMessage(SendDebitSmsRequest $request){

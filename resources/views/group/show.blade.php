@@ -154,10 +154,73 @@
     </div>
     <div class="row">
       <div class="col-lg-12">
+        <!-- Guruhdagi talabalar tarixi -->
         <div class="card">
           <div class="card-body">
             <h4 class="card-title">Guruhdagi talabalar tarixi</h4>
-            <div class="table-responsive notes-wrapper" style="font-size:14px;max-height: 300px; overflow-y: auto; overflow-x: hidden;height:300px">
+            <div class="table-responsive notes-wrapper" style="font-size:14px;max-height: 500px; overflow-y: auto; overflow-x: hidden;">
+              <table class="table table-bordered table-sm" style="font-size: 14px; vertical-align: middle;">
+                <thead>
+                  <tr class="text-center align-middle bg-light">
+                    <th rowspan="2">#</th>
+                    <th rowspan="2">Talaba</th>
+                    <th rowspan="2">Guruhdagi holati</th>
+                    <th rowspan="2">Guruhga qo'shildi</th>
+                    <th rowspan="2">Izoh</th>
+                    <th rowspan="2">Meneger</th>
+                    <th rowspan="2">Guruhga o'chirildi</th>
+                    <th rowspan="2">Izoh</th>
+                    <th rowspan="2">Meneger</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @forelse ($userHistory as $item)
+                    <tr class="text-center align-middle">
+                      <td>{{ $loop->index+1 }}</td>
+                      <td class="text-start">
+                        <a href="{{ route('tashrif_show',$item->user_id ) }}">{{ $item->user->name }}</a>
+                      </td>
+                      <td>
+                        @if($item->is_active)
+                          <p class="m-0 p-0 text-danger">Aktiv</p>
+                        @else
+                          <p class="m-0 p-0 text-success">O'chirilgan</p>
+                        @endif
+                      </td>
+                      <td>{{ $item->start_data->format('Y-m-d') }}</td>
+                      <td>{{ $item->start_comment }}</td>
+                      <td>{{ $item->startAdmin->name }}</td>
+                      <td>
+                        @if($item->end_data)
+                          {{ $item->end_data->format('Y-m-d') }}
+                        @else
+                          -
+                        @endif
+                      </td>
+                      <td>{{ $item->end_comment }}</td>
+                      <td>
+                        @if($item->endAdmin)
+                          {{ $item->endAdmin->name }}
+                        @else
+                          -
+                        @endif</td>
+                    </tr>
+                  @empty
+                    <tr>
+                      <td colspan="8" class="text-center">Guruh talabalari mavjud emas.</td>
+                    </tr>
+                  @endforelse
+                  
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <!-- Guruhdagi talabalar test natijalari -->
+        <div class="card">
+          <div class="card-body">
+            <h4 class="card-title">Guruhdagi talabalar test natijalari</h4>
+            <div class="table-responsive notes-wrapper" style="font-size:14px;max-height: 500px; overflow-y: auto; overflow-x: hidden;">
               <table class="table table-bordered table-sm" style="font-size: 14px; vertical-align: middle;">
                 <thead>
                   <tr class="text-center align-middle bg-light">
@@ -169,13 +232,6 @@
                     <th rowspan="2">Guruhga o'chirildi</th>
                     <th rowspan="2">Izoh</th>
                     <th rowspan="2">Meneger</th>
-                    <th colspan="4">Test natijasi</th> <th rowspan="2">Davomad</th>
-                  </tr>
-                  <tr class="text-center align-middle bg-light">
-                    <th>Urinish</th>
-                    <th>Testlar soni</th>
-                    <th>To'g'ri javob</th>
-                    <th>Ball</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -187,13 +243,48 @@
                     <td>-</td>
                     <td>-</td>
                     <td>-</td>
-                    <td>1</td>
-                    <td>50</td>
-                    <td>45</td>
-                    <td><span class="badge bg-success">90</span></td>
-                    <td>95%</td>
                   </tr>
                 </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <!-- Guruh davomadi -->
+        <div class="card">
+          <div class="card-body">
+            <h4 class="card-title">Guruh davomadi</h4>
+            <div class="table-responsive notes-wrapper" style="font-size:14px;max-height: 500px; overflow-y: auto; overflow-x: hidden;">
+              <div class="table-responsive">
+              <table class="table table-bordered table-striped text-center align-middle">
+                  <thead class="table-light">
+                      <tr>
+                          <th style="width: 50px;">#</th>
+                          <th class="text-start">Talaba</th>
+                          @foreach($davomadTable['groupDays'] as $day) <th>{{ $day->data->format('d-m-Y') }}</th> @endforeach
+                      </tr>
+                  </thead>
+                  <tbody>
+                      @foreach($davomadTable['groupUsers'] as $index => $gUser)
+                          <tr>
+                              <td>{{ $index + 1 }}</td>
+                              <td class="text-start"> <strong>{{ $gUser->user->name }}</strong> </td>
+                              @foreach($davomadTable['groupDays'] as $day)
+                                  @php
+                                      $dateStr = $day->data->format('Y-m-d');
+                                      $key = $gUser->user_id . '_' . $dateStr;
+                                      $attendance = $davomadTable['allAttendances'][$key] ?? null;
+                                  @endphp
+                                  <td>
+                                      @if($attendance)
+                                          @if($attendance->status == 'keldi') <span class="badge bg-success">Keldi</span> @elseif($attendance->status == 'kelmadi') <span class="badge bg-danger">Kelmadi</span> @elseif($attendance->status == 'sababli') <span class="badge bg-warning text-dark">Sababli</span> @endif
+                                      @else
+                                          @if($day->data->isFuture()) <span class="text-muted small">-</span> @else <span class="text-secondary small">noFaol</span> @endif
+                                      @endif
+                                  </td>
+                              @endforeach
+                          </tr>
+                      @endforeach
+                  </tbody>
               </table>
             </div>
           </div>
