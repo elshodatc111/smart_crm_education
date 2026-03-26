@@ -77,4 +77,7 @@ class User extends Authenticatable{
             }
         });
     }
+    public function sfmToken(){
+        return $this->hasOne(UserSfmToken::class);
+    }
 }
