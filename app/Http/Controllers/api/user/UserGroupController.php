@@ -3,17 +3,7 @@
 namespace App\Http\Controllers\api\user;
 
 use App\Http\Controllers\Controller;
-use App\Models\Cours;
-use App\Models\CoursAudio;
-use App\Models\CoursBook;
-use App\Models\CoursVideo;
-use App\Models\Group;
-use App\Models\GroupData;
-use App\Models\GroupUser;
-use App\Models\UserPayment;
 use App\Services\api\UserGroupsService;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\JsonResponse;
 
