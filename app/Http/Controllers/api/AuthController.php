@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\api\auth\ChangePasswordRequest;
 use App\Http\Requests\api\auth\LoginRequest;
 use App\Services\api\AuthService;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -55,6 +56,14 @@ class AuthController extends Controller{
         return response()->json([
             'status' => 'success',
             'message' => 'Tizimdan muvaffaqiyatli chiqdingiz'
+        ], 200);
+    }
+
+    public function updatePassword(ChangePasswordRequest $request): JsonResponse{
+        $this->authService->changePassword(auth()->user(), $request->validated());
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Parolingiz muvaffaqiyatli yangilandi.'
         ], 200);
     }
 

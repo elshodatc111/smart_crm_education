@@ -10,6 +10,6 @@ Route::post('/password/verify-code', [PasswordResetController::class, 'verifyCod
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/profile', [AuthController::class, 'profile']); 
     Route::post('/logout', [AuthController::class, 'logout']);
-
+    Route::post('/update-password', [AuthController::class, 'updatePassword']);
 
 });

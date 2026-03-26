@@ -44,4 +44,16 @@ class AuthService{
         return true;
     }
 
+    public function changePassword($user, array $data){
+        if (!Hash::check($data['current_password'], $user->password)) {
+            throw ValidationException::withMessages([
+                'current_password' => ['Joriy parol noto‘g‘ri.'],
+            ]);
+        }
+        $user->password = $data['new_password'];
+        $user->save();
+        return true;
+    }
+    
+
 }
