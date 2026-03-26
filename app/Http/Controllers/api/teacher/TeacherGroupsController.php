@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\api\teacher;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Web\Group\AttendanceStoreRequest;
 use App\Models\Group;
 use App\Models\GroupData;
 use App\Models\GroupUser;
@@ -46,6 +47,37 @@ class TeacherGroupsController extends Controller{
             'status' => 'success',
             'data'   => $res
         ],200);
+    }
+
+    public function davomad(AttendanceStoreRequest $request): JsonResponse{
+        try {
+            $this->teacherService->storeAttendance($request->validated());
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Davomad muvaffaqiyatli saqlandi!'
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Xatolik yuz berdi: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function attendanceHistory($id):JsonResponse{
+        $data = $this->teacherService->getGroupAttendanceHistory((int)$id);
+        return response()->json([
+            'status' => 'success',
+            'data'   => $data
+        ]);
+    }
+
+    public function testNatija($id){
+        return response()->json([
+            'status' => 'success',
+            'data'   => $id,
+            'message' => 'Bu qismi tayyorlanmoqda'
+        ]);
     }
 
 }

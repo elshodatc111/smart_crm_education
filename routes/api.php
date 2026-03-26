@@ -17,4 +17,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/teacher/home/show/{id}', [TeacherGroupsController::class, 'homeShow']); 
     Route::get('/teacher/home/show/user/{id}', [TeacherGroupsController::class, 'homeShowUsers']); 
     Route::get('/teacher/home/show/data/{id}', [TeacherGroupsController::class, 'HomeShowData']); 
+    Route::post('/teacher/home/attendance', [TeacherGroupsController::class, 'davomad']); 
+    Route::get('/teacher/home/attendance/history/{id}', [TeacherGroupsController::class, 'attendanceHistory']); 
+    Route::get('/teacher/home/test/natija/{id}', [TeacherGroupsController::class, 'testNatija']); 
 });

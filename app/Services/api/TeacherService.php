@@ -8,6 +8,8 @@ use App\Models\GroupUser;
 use App\Models\UserDavomad;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class TeacherService{
     
@@ -104,6 +106,51 @@ class TeacherService{
                 'id'     => $item->id,
                 'date'   => $item->data->format('Y-m-d'),
                 'status' => $status
+            ];
+        })->toArray();
+    }
+
+    public function storeAttendance(array $data): void{
+        DB::transaction(function () use ($data) {
+            $groupId = $data['group_id'];
+            $today = now()->toDateString();
+            foreach ($data['attendances'] as $attendance) {
+                UserDavomad::updateOrCreate(
+                    [
+                        'group_id' => $groupId,
+                        'user_id'  => $attendance['user_id'],
+                        'date'     => $today,
+                    ],
+                    [
+                        'status'     => $attendance['status'],
+                        'created_by' => Auth::id(),
+                    ]
+                );
+            }
+        });
+    }
+
+    public function getGroupAttendanceHistory(int $groupId): array{
+        $today = now()->format('Y-m-d');
+        $users = \App\Models\GroupUser::with('user')->where('group_id', $groupId)->where('is_active', true)->get();
+        $groupDates = \App\Models\GroupData::where('group_id', $groupId)->where('data', '<=', $today)->orderBy('data', 'desc')->get();
+        $allAttendances = \App\Models\UserDavomad::where('group_id', $groupId)->where('date', '<=', $today)->get()->groupBy('user_id');
+        return $users->map(function ($item) use ($groupDates, $allAttendances) {
+            $userAttendances = $allAttendances->get($item->user_id) ?? collect();            
+            $presents = $userAttendances->where('status', 'keldi')->count();
+            $absents = $userAttendances->where('status', 'kelmadi')->count();
+            $totalLessons = $groupDates->count();
+            return [
+                'user_id'   => $item->user_id,
+                'user_name' => $item->user?->name ?? 'Noma’lum',
+                'stats'     => "($presents/$absents/$totalLessons)",
+                'history'   => $groupDates->map(function ($date) use ($userAttendances) {
+                    $attendance = $userAttendances->where('date', $date->data)->first();                    
+                    return [
+                        'date'   => Carbon::parse($date->data)->format('Y-m-d'),
+                        'status' => $attendance ? $attendance->status : 'no_data',
+                    ];
+                }),
             ];
         })->toArray();
     }

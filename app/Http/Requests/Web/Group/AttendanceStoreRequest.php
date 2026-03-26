@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests\Web\Group;
 
-use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class AttendanceStoreRequest extends FormRequest
