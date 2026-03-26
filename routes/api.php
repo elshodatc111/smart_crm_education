@@ -27,5 +27,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user/home/video/{id}', [UserGroupController::class, 'video']); 
     Route::get('/user/home/audio/{id}', [UserGroupController::class, 'audio']); 
     Route::get('/user/home/book/{id}', [UserGroupController::class, 'book']); 
+    Route::get('/user/groups', [UserGroupController::class, 'allGroups']);
+    Route::get('/user/group/show/{id}', [UserGroupController::class, 'groupsShow']);
+    Route::get('/user/payment', [UserGroupController::class, 'payments']);
 
 });
