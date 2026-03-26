@@ -9,11 +9,7 @@ use App\Models\CoursVideo;
 use App\Models\Group;
 use App\Models\GroupData;
 use App\Models\GroupUser;
-use App\Models\UserDavomad;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Auth;
 
 class UserGroupsService{
     public function getAvailableCourses($userId){
