@@ -4,10 +4,6 @@ namespace App\Http\Controllers\api\teacher;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Web\Group\AttendanceStoreRequest;
-use App\Models\Group;
-use App\Models\GroupData;
-use App\Models\GroupUser;
-use App\Models\UserDavomad;
 use App\Services\api\TeacherService;
 use Illuminate\Http\JsonResponse;
 
@@ -76,7 +72,7 @@ class TeacherGroupsController extends Controller{
         return response()->json([
             'status' => 'success',
             'data'   => $id,
-            'message' => 'Bu qismi tayyorlanmoqda'
+            'message' => 'Bu qismi tayyorlanmoqda (test natijalari)'
         ]);
     }
 

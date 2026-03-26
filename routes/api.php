@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\api\{AuthController,PasswordResetController};
-use App\Http\Controllers\api\teacher\{TeacherGroupsController};
+use App\Http\Controllers\api\teacher\{TeacherGroupsController, TeacherPaymentController};
 use Illuminate\Support\Facades\Route;
 
 Route::post('/login', [AuthController::class, 'login']);
@@ -20,4 +20,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/teacher/home/attendance', [TeacherGroupsController::class, 'davomad']); 
     Route::get('/teacher/home/attendance/history/{id}', [TeacherGroupsController::class, 'attendanceHistory']); 
     Route::get('/teacher/home/test/natija/{id}', [TeacherGroupsController::class, 'testNatija']); 
+    Route::get('/teacher/ishhaqi', [TeacherPaymentController::class, 'payments']); 
+    // Users
+
 });
