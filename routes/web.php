@@ -11,6 +11,7 @@ use App\Http\Controllers\web\{
     TashrifController,
     DamOlishController,
     GroupController,
+    ReportController,
 };
 use Illuminate\Support\Facades\Route;
 
@@ -47,7 +48,12 @@ Route::middleware(['auth','role:admin,director,manager,operator'])->group(functi
     Route::post('/group/remote/user', [GroupController::class, 'remoteUser'])->name('group_remote_user');
     Route::post('/group/debit/send/message', [GroupController::class, 'debitSendMessage'])->name('group_debit_send_message');
     Route::post('/group/davomad', [GroupController::class, 'davomad'])->name('attendance_store');
-
+    # Hisobotlar
+    Route::get('/report/users', [ReportController::class, 'users'])->name('report_users');
+    Route::get('/report/payment', [ReportController::class, 'payment'])->name('report_payment');
+    Route::get('/report/groups', [ReportController::class, 'groups'])->name('report_groups');
+    Route::get('/report/message', [ReportController::class, 'message'])->name('report_message');
+    Route::post('/report/export', [ReportController::class, 'export'])->name('report_export');
 });
 # Hodimlar
 Route::middleware(['auth','role:admin,director'])->group(function () { 

@@ -42,13 +42,28 @@
     @endif
     @if(auth()->user()->role == 'admin' OR auth()->user()->role == 'director' OR auth()->user()->role == 'manager')
     <li class="nav-item">
-      <a class="nav-link collapsed" data-bs-target="#report-nav" data-bs-toggle="collapse" href="#">
+      <a class="nav-link {{ request()->routeIs(['report_*']) ? '' : 'collapsed' }}" data-bs-target="#report-nav" data-bs-toggle="collapse" href="#">
         <i class="bi bi-file-earmark-bar-graph"></i><span>Hisobotlar</span><i class="bi bi-chevron-down ms-auto"></i>
       </a>
-      <ul id="report-nav" class="nav-content collapse" data-bs-parent="#sidebar-nav">
+      <ul id="report-nav" class="nav-content collapse {{ request()->routeIs(['report_*']) ? 'show' : '' }}" data-bs-parent="#sidebar-nav">
         <li>
-          <a href="#" class="nav-link">
-            <i class="bi bi-circle"></i><span>To'lovlar | Chegirmalar</span>
+          <a href="{{ route('report_users') }}" class="{{ request()->routeIs('report_users') ? 'active' : '' }}">
+            <i class="bi bi-circle"></i><span>Talabalar</span>
+          </a>
+        </li>
+        <li>
+          <a href="{{ route('report_payment') }}" class="{{ request()->routeIs('report_payment') ? 'active' : '' }}">
+            <i class="bi bi-circle"></i><span>To'lovlar</span>
+          </a>
+        </li>
+        <li>
+          <a href="{{ route('report_groups') }}" class="{{ request()->routeIs('report_groups') ? 'active' : '' }}">
+            <i class="bi bi-circle"></i><span>Guruhlar</span>
+          </a>
+        </li>
+        <li>
+          <a href="{{ route('report_message') }}" class="{{ request()->routeIs('report_message') ? 'active' : '' }}">
+            <i class="bi bi-circle"></i><span>Yuborilgan SMS</span>
           </a>
         </li>
       </ul>
