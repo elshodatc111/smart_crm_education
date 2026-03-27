@@ -1,10 +1,22 @@
 <nav class="header-nav ms-auto">
     <ul class="d-flex align-items-center list-unstyled mb-0">
+        <li class="nav-item dropdown">
+          <a class="nav-link nav-icon" href="#">
+            <i class="bi bi-cake2 text-primary"></i>
+            <span class="badge bg-warning badge-number">0</span>
+          </a>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link nav-icon" href="#">
+            <i class="bi bi-bell"></i>
+            <span class="badge bg-primary badge-number">0</span>
+          </a>
+        </li>
         <li class="nav-item dropdown pe-3">
             <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
-                <i class="bi bi-person-circle fs-4"></i>
+                <i class="bi bi-person-circle fs-5"></i>
                 <span class="d-none d-md-block dropdown-toggle ps-2 fw-bold text-dark">
-                    {{ Auth()->user()->role }}
+                    {{ mb_strtoupper(Auth::user()->role) }}
                 </span>
             </a>
             <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile shadow mt-3 border-0">
@@ -17,7 +29,7 @@
                 <li>
                     <a class="dropdown-item d-flex align-items-center py-2" href="#">
                         <i class="bi bi-person-vcard me-2 text-primary"></i>
-                        <span>Profile</span>
+                        <span>Profil</span>
                     </a>
                 </li>
                 <li>
@@ -26,7 +38,7 @@
                         <i class="bi bi-box-arrow-right me-2"></i>
                         <span>Chiqish</span>
                     </a>
-                    <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                    <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none" onsubmit="return confirm('Rostdan ham logindan chiqmoqchimisiz?')">
                         @csrf
                     </form>
                 </li>
