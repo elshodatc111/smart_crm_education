@@ -15,6 +15,7 @@ use App\Models\Cours;
 use App\Models\DamOlishKuni;
 use App\Models\Group;
 use App\Models\GroupData;
+use App\Models\GroupTest;
 use App\Models\GroupUser;
 use App\Models\PaymentSetting;
 use App\Models\User;
@@ -128,12 +129,26 @@ class GroupController extends Controller{
                 $debitUser[$key]['user_id'] = $value->user->id;
                 $debitUser[$key]['name'] = $value->user->name;
                 $debitUser[$key]['balance'] = $value->user->balance;
-            }
+            } 
         }
         $debitUserStatus = count($debitUser);
         $davomadTable = $this->showAttendance($id);
         $userHistory = GroupUser::where('group_id',$id)->get();
-        return view('group.show',compact('group','cours','rooms','pay_setting','teacher','activUser','debitUser','debitUserStatus','activDavomad','davomadTable','userHistory'));
+        $testNatija = GroupTest::where('group_id',$id)->orderby('user_id','desc')->get();
+        return view('group.show',compact(
+            'group',
+            'cours',
+            'rooms',
+            'pay_setting',
+            'teacher',
+            'activUser',
+            'debitUser',
+            'debitUserStatus',
+            'activDavomad',
+            'davomadTable',
+            'userHistory',
+            'testNatija'
+        ));
     }
 
     public function debitSendMessage(SendDebitSmsRequest $request){
@@ -281,29 +296,6 @@ class GroupController extends Controller{
         });
     }
 
-    public function davomad(AttendanceStoreRequest $request){
-        try {
-            DB::transaction(function () use ($request) {
-                $groupId = $request->group_id;
-                $today = now()->toDateString();
-                foreach ($request->attendances as $data) {
-                    UserDavomad::updateOrCreate(
-                        [
-                            'group_id' => $groupId,
-                            'user_id'  => $data['user_id'],
-                            'date'     => $today,
-                        ],
-                        [
-                            'status'     => $data['status'],
-                            'created_by' => Auth::id(),
-                        ]
-                    );
-                }
-            });
-            return back()->with('success', 'Bugun uchun davomad muvaffaqiyatli saqlandi!');
-        } catch (\Exception $e) {
-            return back()->withErrors(['error' => 'Xatolik: ' . $e->getMessage()]);
-        }
-    }
+    
 
 }

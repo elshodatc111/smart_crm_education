@@ -141,13 +141,6 @@
               </button>
             </div>
             @endif
-            @if(auth()->user()->role=='admin')
-            <div class="col-lg-3">
-              <button class="btn btn-success w-100 mt-2" data-bs-toggle="modal" data-bs-target="#studentDavomad">
-                <i class="bi bi-play-circle me-1"></i> Davomad olish
-              </button>
-            </div>
-            @endif
           </div>
         </div>
       </div>
@@ -226,24 +219,27 @@
                   <tr class="text-center align-middle bg-light">
                     <th rowspan="2">#</th>
                     <th rowspan="2">Talaba</th>
-                    <th rowspan="2">Guruhga qo'shildi</th>
-                    <th rowspan="2">Izoh</th>
-                    <th rowspan="2">Meneger</th>
-                    <th rowspan="2">Guruhga o'chirildi</th>
-                    <th rowspan="2">Izoh</th>
-                    <th rowspan="2">Meneger</th>
+                    <th rowspan="2">Test Savollari</th>
+                    <th rowspan="2">To'g'ri javov</th>
+                    <th rowspan="2">Ball</th>
+                    <th rowspan="2">Test Vaqti</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr class="text-center align-middle">
-                    <td>1</td>
-                    <td class="text-start">Aliyev Vali</td> <td>2024-01-10</td>
-                    <td>Yaxshi</td>
-                    <td>Admin</td>
-                    <td>-</td>
-                    <td>-</td>
-                    <td>-</td>
-                  </tr>
+                  @forelse ($testNatija as $item)
+                    <tr class="text-center align-middle">
+                      <td>{{ $loop->index+1 }}</td>
+                      <td class="text-start">{{ $item->user->name }}</td>
+                      <td>{{ $item['savollar'] }}</td>
+                      <td>{{ $item['togri_javob'] }}</td>
+                      <td>{{ $item['ball'] }}</td>
+                      <td>{{ $item['created_at'] }}</td>
+                    </tr>
+                  @empty
+                    <tr>
+                      <td colspan="6" class="text-center">Test natijalari mavjud emas</td>
+                    </tr>
+                  @endforelse
                 </tbody>
               </table>
             </div>
@@ -293,56 +289,7 @@
     </div>
   </section>
 
-<div class="modal fade" id="studentDavomad" tabindex="-1">
-  <form action="{{ route('attendance_store') }}" method="post">
-    @csrf 
-    <div class="modal-dialog modal-lg">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Davomad: {{ date('d.m.Y') }}</h5>
-          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-        </div>
-        <div class="modal-body">
-          <input type="hidden" name="group_id" value="{{ $group->id }}">
-          <table class="table align-middle">
-            <thead class="table-light">
-              <tr>
-                <th>Talaba ismi</th>
-                <th class="text-center">Holatni belgilang</th>
-              </tr>
-            </thead>
-            <tbody>
-              @foreach ($activDavomad as $item)
-                @php
-                  $currentStatus = $item->todayAttendance ? $item->todayAttendance->status : 'kelmadi';
-                @endphp
-                <tr>
-                  <td>
-                    <strong>{{ $item->user->name }}</strong>
-                    <input type="hidden" name="attendances[{{ $loop->index }}][user_id]" value="{{ $item->user_id }}">
-                  </td>
-                  <td class="text-center">
-                    <div class="btn-group w-100" role="group">
-                      <input type="radio" class="btn-check" name="attendances[{{ $loop->index }}][status]" id="k_{{ $item->user_id }}" value="keldi" {{ $currentStatus == 'keldi' ? 'checked' : '' }}>
-                      <label class="btn btn-outline-success" for="k_{{ $item->user_id }}">Keldi</label>
-                      <input type="radio" class="btn-check" name="attendances[{{ $loop->index }}][status]" id="km_{{ $item->user_id }}" value="kelmadi" {{ $currentStatus == 'kelmadi' ? 'checked' : '' }}>
-                      <label class="btn btn-outline-danger" for="km_{{ $item->user_id }}">Kelmadi</label>
-                      <input type="radio" class="btn-check" name="attendances[{{ $loop->index }}][status]" id="s_{{ $item->user_id }}" value="sababli" {{ $currentStatus == 'sababli' ? 'checked' : '' }}>
-                      <label class="btn btn-outline-warning" for="s_{{ $item->user_id }}">Sababli</label>                      
-                    </div>
-                  </td>
-                </tr>
-              @endforeach
-            </tbody>
-          </table>
-        </div>
-        <div class="modal-footer">
-          <button type="submit" class="btn btn-primary w-100">Davomadni saqlash</button>
-        </div>
-      </div>
-    </div>
-  </form>
-</div>
+
 
 <div class="modal" id="sendDebetMessage" tabindex="-1">
   <form action="{{ route('group_debit_send_message') }}" method="post">
