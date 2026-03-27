@@ -22,6 +22,9 @@ class GroupUser extends Model{
         'start_data' => 'date',
         'end_data' => 'date',
     ];
+    public function users(){
+        return $this->hasMany(GroupUser::class, 'group_id');
+    }
     public function group(){
         return $this->belongsTo(Group::class, 'group_id');
     }

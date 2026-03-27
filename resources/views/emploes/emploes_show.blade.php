@@ -12,6 +12,7 @@
         </ol>
       </nav>
       <nav class="col-lg-6 d-flex justify-content-end gap-2">
+        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#ish_haqi_tolash">Ish haqi to'lash</button>
         <form action="{{ route('emploes_updatePassword') }}" method="post" 
           onsubmit="return confirm('Parolni yangilamoqchimisiz?')">
           @csrf 
@@ -104,8 +105,7 @@
             </form>
           </div>
         </div>
-      </div>
-      
+      </div>      
       <div class="{{ $user->role=='teacher' ? 'd-none':'col-lg-4' }}">
         <div class="card">
           <div class="card-body">
@@ -127,25 +127,59 @@
           </div>
         </div>
       </div>  
-      @if($user->role=='teacher')    
+      @if($user->role=='teacher')  
       <div class="col-lg-12">
         <div class="card">
           <div class="card-body">
-            <h5 class="card-title">Guruhlar</h5>
-            <div class="table-responsive notes-wrapper" style="max-height: 500px; overflow-y: auto; overflow-x: hidden;height:500px">
+            <h5 class="card-title">Guruhlar (Guruh yakunlangach 40 kundan kiyin o'chiriladi)</h5>
+            <div class="table-responsive notes-wrapper" style="max-height: 500px; overflow-y: auto; overflow-x: hidden">
               <table class="table table-bordered" style="font-size:14px;">
                 <thead>
                   <tr class="text-center">
                     <th>#</th>
                     <th>Guruh</th>
-                    <th>To'lov summasi</th>
-                    <th>To'lov vaqti</th>
-                    <th>To'lov haqida</th>
-                    <th>Direktor</th>
-                    <th>To'lov vaqti</th>
+                    <th>Guruh holati</th>
+                    <th>Boshlanish / Tugash</th>
+                    <th>Davomad/Darslar</th>
+                    <th>O'qituvchiga to'lov(Talaba)</th>
+                    <th>O'qituvchiga bonus(Talaba)</th>
+                    <th>Ish haqi hisoblandi</th>
+                    <th>Ish haqi to'landi</th>
+                    <th>Qoldi</th>
                   </tr>
                 </thead>
-                <tbody></tbody>
+                <tbody>
+                  @forelse ($teacherGroups as $item)
+                    <tr>
+                      <td class="text-center">{{ $loop->index+1 }}</td>
+                      <td>
+                        <a href="{{ route('group_show',$item['group_id']) }}">
+                          {{ $item['group_name'] }}
+                        </a>
+                      </td>
+                      <td class="text-center">
+                        @if($item['status']=='yakunlangan')
+                          <b class="p-0 m-0 text-danger">Yakunlandi</b>
+                        @elseif($item['status']=='jarayonda')
+                          <b class="p-0 m-0 text-warning">Jarayonda</b>
+                        @else
+                          <b class="p-0 m-0 text-primary">Yangi</b>
+                        @endif
+                      </td>
+                      <td class="text-center">{{ $item['start_lesson'] }} / {{ $item['end_lesson'] }}</td>
+                      <td class="text-center">{{ $item['davomat_count'] }} / {{ $item['dars_count'] }}</td>
+                      <td class="text-center">{{ number_format($item['teacher_pay'], 0, '.', ' ') }} UZS ({{ $item['users'] }})</td>
+                      <td class="text-center">{{ number_format($item['teacher_bonus'], 0, '.', ' ') }} UZS ({{ $item['users_bonus'] }})</td>
+                      <td class="text-center">{{ number_format($item['payment_hisob'], 0, '.', ' ') }} UZS</td>
+                      <td class="text-center">{{ number_format($item['payment'], 0, '.', ' ') }} UZS</td>
+                      <td class="text-center">{{ number_format($item['payment_qoldiq'], 0, '.', ' ') }} UZS</td>
+                    </tr>
+                  @empty
+                    <tr>
+                      <td colspan="10" class="text-center">Guruhlar mavjud emas.</td>
+                    </tr>
+                  @endforelse
+                </tbody>
               </table>
             </div>
           </div>
@@ -178,4 +212,54 @@
     </div>
   </section>
 
+
+<div class="modal" id="ish_haqi_tolash" tabindex="-1">
+  <form action="#" method="post">
+    @csrf 
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Ish haqi to'lash</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <table class="table table-bordered" style="font-size: 12">
+            <tr>
+              <td colspan="2" class="text-center">Balansda mavjud</td>
+            </tr>
+            <tr class="text-center">
+              <td>15 000 UZS (Naqt)</td>
+              <td>15 000 UZS (Karta)</td>
+            </tr>
+          </table>
+          @if($user->role=='teacher')  
+          <label for="group_id" class="mb-2">Guruhni tanlang</label>
+          <select name="group_id" required class="form-select">
+            <option value="">Tanlang ...</option>
+            @foreach ($teacherGroups as $item)
+              <option value="{{ $item['group_id'] }}">{{ $item['group_name'] }} || Qoldiq: {{ number_format($item['payment_qoldiq'], 0, '.', ' ') }} UZS</option>
+            @endforeach
+          </select>
+          @else
+          <input type="hidden" name="group_id">
+          @endif
+          <label for="amount" class="my-2">To'lov summasi</label>
+          <input type="text" name="amount" class="form-control" required id="amount1">
+          <label for="payment_type" class="my-2">To'lov turi</label>
+          <select name="payment_type" required class="form-select">
+            <option value="">Tanlang ...</option>
+            <option value="cash">Naqt</option>
+            <option value="card">Karta</option>
+          </select>
+          <label for="description" class="my-2">To'lov haqida</label>
+          <input type="text" name="description" required class="form-control">
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Bekor qilish</button>
+          <button type="submit" class="btn btn-primary">Ish haqi to'lash</button>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
 @endsection

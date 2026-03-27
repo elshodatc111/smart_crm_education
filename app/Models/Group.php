@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Group extends Model{
     use SoftDeletes;
@@ -29,6 +30,12 @@ class Group extends Model{
         'teacher_pay' => 'decimal:2',
         'teacher_bonus' => 'decimal:2',
     ];
+    public function users(): HasMany {
+        return $this->hasMany(GroupUser::class, 'group_id');
+    }
+    public function user(): BelongsTo{
+        return $this->belongsTo(User::class, 'teacher_id');
+    }
     public function course(){
         return $this->belongsTo(Cours::class, 'cours_id');
     }
