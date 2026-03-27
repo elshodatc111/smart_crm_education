@@ -9,15 +9,18 @@ use App\Models\BalansHistory;
 use App\Models\Kassa;
 use App\Models\KassaHistory;
 use App\Models\KassaSetting;
+use App\Models\UserPayment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
 
 class KassaController extends Controller{
     public function kassa(){
         $kassa = Kassa::getSettings();
         $history = KassaHistory::where('status','pending')->get();
-        return view('kassa.kassa',compact('kassa','history'));
+        $return = UserPayment::where('type', 'return')->where('created_at', '>=', now()->subDays(45))->orderBy('id', 'desc')->get();
+        return view('kassa.kassa',compact('kassa','history','return'));
     }
     public function chiqim(KassaChiqimRequest $request){
         DB::transaction(function () use ($request) {

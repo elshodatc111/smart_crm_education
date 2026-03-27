@@ -39,7 +39,8 @@
         <span>Moliya</span>
       </a>
     </li>
-
+    @endif
+    @if(auth()->user()->role == 'admin' OR auth()->user()->role == 'director' OR auth()->user()->role == 'manager')
     <li class="nav-item">
       <a class="nav-link collapsed" data-bs-target="#report-nav" data-bs-toggle="collapse" href="#">
         <i class="bi bi-file-earmark-bar-graph"></i><span>Hisobotlar</span><i class="bi bi-chevron-down ms-auto"></i>
@@ -65,7 +66,8 @@
         </li>
       </ul>
     </li>
-
+    @endif
+    @if(auth()->user()->role == 'admin' OR auth()->user()->role == 'director')
     <li class="nav-item">
       <a class="nav-link {{ request()->routeIs(['setting_*']) ? '' : 'collapsed' }}" data-bs-target="#setting-nav" data-bs-toggle="collapse" href="#">
         <i class="bi bi-gear"></i><span>Sozlamalar</span><i class="bi bi-chevron-down ms-auto"></i>

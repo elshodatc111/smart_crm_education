@@ -11,7 +11,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 
-class TeacherService{
+class TeacherService{ 
     
     public function getGroupsForTeacher($teacherId): Collection{
         $groups = Group::where('teacher_id', $teacherId)->orderBy('start_lesson', 'desc')->get();

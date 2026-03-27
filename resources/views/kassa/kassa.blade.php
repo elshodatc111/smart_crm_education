@@ -26,7 +26,7 @@
                     <i class="bi bi-credit-card-2-front me-1 text-success"></i> Plastik: <b>{{ number_format($kassa['card'], 0, '.', ' ') }}</b> UZS
                 </li>
             </ul>
-            <button class="btn btn-danger w-100 mt-3" data-bs-toggle="modal" data-bs-target="#refundModal">
+            <button class="btn btn-danger w-100 mt-3" data-bs-toggle="modal" data-bs-target="#payment_return">
                 <i class="bi bi-arrow-counterclockwise me-1"></i> Qaytarilgan to'lovlar
             </button>
           </div>
@@ -141,7 +141,7 @@
     </div>
   </section>
 
-
+<!-- Kassadan chiqim -->
 <div class="modal" id="kassadanChiqim" tabindex="-1">
   <form action="{{ route('kassa_chiqim') }}" method="post">
     @csrf 
@@ -182,6 +182,7 @@
     </div>
   </form>
 </div>
+<!-- Kassadan xarajat -->
 <div class="modal" id="kassadanXarajat" tabindex="-1">
   <form action="{{ route('kassa_chiqim') }}" method="post">
     @csrf 
@@ -221,5 +222,56 @@
       </div>
     </div>
   </form>
+</div>
+
+<div class="modal" id="payment_return" tabindex="-1">
+  <div class="modal-dialog modal-lg"> 
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Qaytarilgan to'lovlar (Oxirgi 45 kunlik)</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="table-responsive notes-wrapper" style="font-size:14px;max-height: 500px; overflow-y: auto; overflow-x: hidden;">
+          <table class="table table-bordered">
+            <thead>
+              <tr class="text-center">
+                <th>#</th>
+                <th>Talaba</th>
+                <th>Qaytarilgan summa</th>
+                <th>To'lov turi</th>
+                <th>Izoh</th>
+                <th>Meneger</th>
+                <th>Qaytarish vaqti</th>
+              </tr>
+            </thead>
+            <tbody>
+              @forelse ($return as $item)
+                <tr>
+                  <td class="text-center">{{ $loop->index+1 }}</td>
+                  <td><a href="{{ route('tashrif_show',$item->user_id) }}">{{ $item->user->name }}</a></td>
+                  <td class="text-center">{{ number_format($item->amount, 0, '.', ' ') }} UZS</td>
+                  <td class="text-center">
+                    @if($item->payment_type=='cash')
+                    Naqt
+                    @else
+                    Karta
+                    @endif
+                  </td>
+                  <td class="text-center">{{ $item->description }}</td>
+                  <td class="text-center">{{ $item->admin->name }}</td>
+                  <td class="text-center">{{ $item->created_at->format("Y-m-d h:i") }}</td>
+                </tr>
+              @empty
+                <tr>
+                  <td colspan="7" class="text-center">Qaytarilgan to'lovlar mavjud emas</td>
+                </tr>
+              @endforelse
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 @endsection

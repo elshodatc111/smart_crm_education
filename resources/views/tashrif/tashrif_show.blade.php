@@ -41,12 +41,6 @@
           <button class="btn btn-outline-success my-2"> <i class="bi bi-person-check-fill"></i> AKTIVLASHTIRISH </button>
         </form>
         @endif
-        @if(auth()->user()->role=='admin' || auth()->user()->role=='director')
-        <form action="" method="post" onsubmit="return confirm('Haqiqatan ham bu talabani o\'chirmoqchimisiz?')">
-          @csrf
-          <button class="btn btn-danger my-2"> <i class="bi bi-trash"></i> O'CHIRISH </button>
-        </form>
-        @endif
       </div>
       <div class="col-lg-4">
         <div class="card notes-wrapper" style="max-height: 330px; overflow-y: auto; overflow-x: hidden;height:330px">
