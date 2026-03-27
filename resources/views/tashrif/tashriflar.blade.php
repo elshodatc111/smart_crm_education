@@ -102,12 +102,23 @@
           </table>
         </div>
         <div class="mt-3 d-flex justify-content-center">
-            {{ $users->links('pagination::bootstrap-5') }}
+            {{ $users->onEachSide(1)->links('pagination::bootstrap-5') }}
         </div>
       </div>
     </div>
   </section>
-
+<style>
+    .pagination {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    /* Mobil qurilmalarda juda ko'p raqam ko'rinishini oldini olish */
+    @media (max-width: 576px) {
+        .pagination .page-item:not(.active):not(.disabled):not(:first-child):not(:last-child):not(:nth-last-child(2)):not(:nth-child(2)) {
+            display: none;
+        }
+    }
+</style>
 
 <script>
     let timer;

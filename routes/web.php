@@ -61,6 +61,7 @@ Route::middleware(['auth','role:admin,director'])->group(function () {
     # Hodimlar
     Route::get('/emploes', [EmploesController::class, 'emploes'])->name('emploes');
     Route::post('/emploes/store', [EmploesController::class, 'store'])->name('emploes_store');
+    Route::post('/emploes/payment', [EmploesController::class, 'storeSalary'])->name('emploes_payment');
     Route::get('/emploes/show/{id}', [EmploesController::class, 'emploesShow'])->name('emploes_show');
     Route::post('/emploe/update-password', [EmploesController::class, 'updatePassword'])->name('emploes_updatePassword');
     Route::post('/emploe/toggle-status', [EmploesController::class, 'toggleStatus'])->name('emploes_toggleStatus');

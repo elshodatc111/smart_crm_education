@@ -38,7 +38,7 @@ class TashrifController extends Controller{
                 ->orWhere('phone', 'like', "%{$search}%");
             });
         }
-        $users = $query->orderBy('id', 'desc')->paginate(20)->withQueryString();
+        $users = $query->orderBy('id', 'desc')->paginate(14)->withQueryString();
         return view('tashrif.tashriflar', compact('users'));
     }
 

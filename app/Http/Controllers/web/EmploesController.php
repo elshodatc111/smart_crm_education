@@ -4,15 +4,20 @@ namespace App\Http\Controllers\web;
 
 use App\Http\Controllers\api\user\UserGroupController;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Web\Emploes\SalaryPaymentRequest;
 use App\Http\Requests\Web\Emploes\StoreEmploesRequest;
 use App\Http\Requests\Web\Emploes\UpdateUserRequest;
+use App\Models\Balans;
+use App\Models\BalansHistory;
 use App\Models\EmplesPayment;
 use App\Models\Group;
 use App\Models\GroupUser;
+use App\Models\Kassa;
 use App\Models\User;
 use App\Models\UserDavomad;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class EmploesController extends Controller{
     
@@ -91,7 +96,42 @@ class EmploesController extends Controller{
     public function emploesShow($id){
         $user = User::findOrFail($id); 
         $teacherGroups = $this->getTeacherSalaryReport($id);
-        return view('emploes.emploes_show',compact('user','teacherGroups'));
+        $balans = Balans::first();
+        $paymart = EmplesPayment::where('user_id',$id)->orderby('id','desc')->get();
+        return view('emploes.emploes_show',compact('user','teacherGroups','balans','paymart'));
+    }
+
+    public function storeSalary(SalaryPaymentRequest $request){
+        DB::transaction(function () use ($request) {
+            EmplesPayment::create([
+                'user_id' => $request->user_id,
+                'group_id' => $request->group_id,
+                'amount' => $request->amount,
+                'payment_type' => $request->payment_type,
+                'description' => $request->description,
+                'admin_id' => Auth::id(),
+                'is_active' => true
+            ]);
+            $balans = Balans::first();
+            if($request->payment_type == 'cash'){
+                $balans->decrement('cash_salary', $request->amount);
+            }else{
+                $balans->decrement('card_salary', $request->amount);
+            }
+            $comment = "";
+            if($request->group_id != null){
+                $group = Group::find($request->group_id);
+                $comment = " ".$group->group_name." Guruh uchun to'lov ";
+            }
+            BalansHistory::create([
+                'type' => $request->payment_type=='cash'?"ishhaqi_pay_cash":"ishhaqi_pay_card",
+                'amount' => $request->amount,
+                'description' => $request->description."(".$comment.")",
+                'user_id' => $request->user_id,
+                'admin_id' => Auth::id(),
+            ]);
+        });
+        return back()->with('success', 'Ish haqi muvaffaqiyatli to\'landi!');
     }
 
     public function updatePassword(Request $request){

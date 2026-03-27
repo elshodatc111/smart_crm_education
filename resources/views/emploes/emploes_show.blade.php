@@ -190,20 +190,42 @@
         <div class="card">
           <div class="card-body">
             <h5 class="card-title">Ish haqi to'lovlari</h5>
-            <div class="table-responsive notes-wrapper" style="max-height: 500px; overflow-y: auto; overflow-x: hidden;height:500px">
+            <div class="table-responsive notes-wrapper" style="max-height: 500px; overflow-y: auto; overflow-x: hidden;">
               <table class="table table-bordered" style="font-size:14px;">
                 <thead>
                   <tr class="text-center">
                     <th>#</th>
+                    @if($user->role=='teacher')  
                     <th>Guruh</th>
+                    @endif
                     <th>To'lov summasi</th>
-                    <th>To'lov vaqti</th>
                     <th>To'lov haqida</th>
                     <th>Direktor</th>
                     <th>To'lov vaqti</th>
                   </tr>
                 </thead>
-                <tbody></tbody>
+                <tbody>
+                  @forelse ($paymart as $item)
+                    <tr>
+                      <td class="text-center">{{ $loop->index+1 }}</td>
+                      @if($user->role=='teacher')  
+                      <td>{{ $item->group->group_name }}</td>
+                      @endif
+                      <td class="text-center">{{  number_format($item->amount, 0, '.', ' ') }} UZS</td>
+                      <td class="text-center">{{ $item->payment_type }}</td>
+                      <td class="text-center">{{ $item->admin->name }}</td>
+                      <td class="text-center">{{ $item->created_at->format("Y-m-d h:i") }}</td>
+                    </tr>
+                  @empty
+                    <tr>
+                      @if($user->role=='teacher')  
+                      <td colspan="6" class="text-center">Ish haqi to'lovlari mavjud emas.</td>
+                      @else
+                      <td colspan="6" class="text-center">Ish haqi to'lovlari mavjud emas.</td>
+                      @endif
+                    </tr>
+                  @endforelse
+                </tbody>
               </table>
             </div>
           </div>
@@ -214,8 +236,9 @@
 
 
 <div class="modal" id="ish_haqi_tolash" tabindex="-1">
-  <form action="#" method="post">
+  <form action="{{ route('emploes_payment') }}" method="post">
     @csrf 
+    <input type="hidden" name="user_id" value="{{ $user['id'] }}">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
@@ -225,11 +248,11 @@
         <div class="modal-body">
           <table class="table table-bordered" style="font-size: 12">
             <tr>
-              <td colspan="2" class="text-center">Balansda mavjud</td>
+              <td colspan="2" class="text-center">Balansda mavjud ish haqi</td>
             </tr>
             <tr class="text-center">
-              <td>15 000 UZS (Naqt)</td>
-              <td>15 000 UZS (Karta)</td>
+              <td>{{ number_format($balans['cash_salary'], 0, '.', ' ') }} UZS (Naqt)</td>
+              <td>{{ number_format($balans['card_salary'], 0, '.', ' ') }} UZS (Karta)</td>
             </tr>
           </table>
           @if($user->role=='teacher')  
@@ -237,7 +260,7 @@
           <select name="group_id" required class="form-select">
             <option value="">Tanlang ...</option>
             @foreach ($teacherGroups as $item)
-              <option value="{{ $item['group_id'] }}">{{ $item['group_name'] }} || Qoldiq: {{ number_format($item['payment_qoldiq'], 0, '.', ' ') }} UZS</option>
+              <option value="{{ $item['group_id'] }}">{{ $item['group_name'] }} | Qoldiq: {{ number_format($item['payment_qoldiq'], 0, '.', ' ') }} UZS</option>
             @endforeach
           </select>
           @else
