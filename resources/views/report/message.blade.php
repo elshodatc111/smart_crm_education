@@ -13,8 +13,20 @@
   <section class="section dashboard">
     <div class="card">
       <div class="card-body">
-        <h5 class="card-title">Hush kelibsiz</h5>
-        <p>Siz tizimga muvaffaqiyatli kirdingiz. Bu yerda sizning asosiy statistikalaringiz ko'rinadi.</p>
+        <h5 class="card-title">SMS Tarixi</h5>
+        <form action="{{ route('report_export') }}" method="post">
+          @csrf 
+          <div class="row">
+            <div class="col-6">
+              <select name="report_type" required class="form-select">
+                <option value="">Tanlang...</option>
+              </select>
+            </div>
+            <div class="col-6">
+              <button class="btn btn-primary w-100">Excelga yuklash</button>
+            </div>
+          </div>
+        </form>
       </div>
     </div>
   </section>
