@@ -29,9 +29,17 @@ use Carbon\Carbon;
 
 class TashrifController extends Controller{
 
-    public function tashriflar(){
-        $users = User::where('role','user')->orderby('id','desc')->get();
-        return view('tashrif.tashriflar',compact('users'));
+    public function tashriflar(Request $request){
+        $query = User::where('role', 'user');
+        if ($request->has('search')) {
+            $search = $request->get('search');
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                ->orWhere('phone', 'like', "%{$search}%");
+            });
+        }
+        $users = $query->orderBy('id', 'desc')->paginate(20)->withQueryString();
+        return view('tashrif.tashriflar', compact('users'));
     }
 
     public function store(StoreVisitRequest $request){
@@ -131,13 +139,6 @@ class TashrifController extends Controller{
     }
 
     public function SpisPayment(StoreSpecialPaymentRequest $request){
-        /*
-            "user_id" => "19"
-            "id" => "2"
-            "cash" => "1500000"
-            "card" => "400000"
-            "description" => "Test uchun"
-        */
         DB::transaction(function () use ($request) {
             $pay = (float)$request->cash + (float)$request->card;
             $spis = PaymentSpecial::findOrFail($request->id);
