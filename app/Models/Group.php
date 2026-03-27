@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Group extends Model{
     use SoftDeletes;
@@ -33,6 +34,9 @@ class Group extends Model{
     }
     public function nextGroup(){
         return $this->belongsTo(Group::class, 'next_group_id');
+    }
+    public function coursTests(): HasMany{
+        return $this->hasMany(CoursTest::class, 'cours_id', 'cours_id');
     }
     public function room(){
         return $this->belongsTo(Classroom::class, 'room_id');

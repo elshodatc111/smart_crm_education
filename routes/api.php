@@ -30,5 +30,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user/groups', [UserGroupController::class, 'allGroups']);
     Route::get('/user/group/show/{id}', [UserGroupController::class, 'groupsShow']);
     Route::get('/user/payment', [UserGroupController::class, 'payments']);
+    Route::get('/user/test/group', [UserGroupController::class, 'testGroup']);
+    Route::get('/user/test/show/{cours_id}/{group_id}', [UserGroupController::class, 'testShow']);    
+    Route::post('/user/test/store', [UserGroupController::class, 'testStore']);
 
 });

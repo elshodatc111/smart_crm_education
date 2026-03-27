@@ -3,6 +3,11 @@
 namespace App\Http\Controllers\api\user;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\api\user\TestAnswerStoreRequest;
+use App\Models\CoursTest;
+use App\Models\Group;
+use App\Models\GroupTest;
+use App\Models\GroupUser;
 use App\Services\api\UserGroupsService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\JsonResponse;
@@ -95,6 +100,35 @@ class UserGroupController extends Controller{
         }
     }
 
+    public function testGroup():JsonResponse{
+        $data = $this->userGroupsService->getUserGroupTests();        
+        return response()->json($data);
+    }
+
+    public function testShow($cours_id, $group_id): JsonResponse{
+        $data = $this->userGroupsService->getCourseTests((int)$cours_id, (int)$group_id);
+        return response()->json($data);
+    }
+    
+    public function testStore(TestAnswerStoreRequest $request): JsonResponse{
+        try {
+            $result = $this->userGroupsService->storeTestResult($request->validated());
+            return response()->json([
+                'status'  => 'success',
+                'message' => 'Test natijalari saqlandi',
+                'data'    => [
+                    'total'   => $result->savollar,
+                    'correct' => $result->togri_javob,
+                    'ball'    => $result->ball,
+                ]
+            ], 200);            
+        } catch (\Exception $e) {
+            return response()->json([
+                'status'  => 'error',
+                'message' => 'Xatolik yuz berdi: ' . $e->getMessage()
+            ], 500);
+        }
+    }
 
 
 }

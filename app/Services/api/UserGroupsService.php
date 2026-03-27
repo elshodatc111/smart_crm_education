@@ -5,11 +5,14 @@ namespace App\Services\api;
 use App\Models\Cours;
 use App\Models\CoursAudio;
 use App\Models\CoursBook;
+use App\Models\CoursTest;
 use App\Models\CoursVideo;
 use App\Models\Group;
 use App\Models\GroupData;
+use App\Models\GroupTest;
 use App\Models\GroupUser;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Auth;
 
 class UserGroupsService{
     public function getAvailableCourses($userId){
@@ -91,6 +94,51 @@ class UserGroupsService{
                 'created_at'   => $value->created_at->format("Y-m-d H:i"), // H:i formatida 24 soatlik vaqt chiqadi
             ];
         })->toArray();
+    }
+
+    public function getUserGroupTests(): array{
+        $userId = Auth::id();
+        $userGroups = GroupUser::with(['group' => function($query) {
+                $query->withCount('coursTests');
+            }])->where('user_id', $userId)->where('is_active', true)->get();
+        $res = [];
+        foreach ($userGroups as $userGroup) {
+            $group = $userGroup->group;            
+            if (!$group) continue;
+            $testCount = $group->cours_tests_count;
+            if ($testCount > 0) {
+                $urinishlar = GroupTest::where('group_id', $group->id)->where('cours_id', $group->cours_id)->where('user_id', $userId)->count();
+                $res[] = [
+                    'group_id'   => $group->id,
+                    'group_name' => $group->group_name,
+                    'cours_id'   => $group->cours_id,
+                    'testCount'  => $testCount,
+                    'urinishlar' => $urinishlar,
+                ];
+            }
+        }
+        return $res;
+    }
+
+    public function getCourseTests(int $courseId, int $groupId): array{
+        $tests = CoursTest::where('cours_id', $courseId)->select(['test_quez', 'answer_a', 'answer_b', 'answer_c', 'answer_d', 'correct_answer'])->get();
+        return [
+            'group_id' => $groupId,
+            'cours_id' => $courseId,
+            'quez' => count($tests),
+            'tests'    => $tests
+        ];
+    }
+
+    public function storeTestResult(array $data){
+        return GroupTest::create([
+            'group_id'    => $data['group_id'],
+            'cours_id'    => $data['cours_id'],
+            'user_id'     => Auth::id(),
+            'savollar'    => $data['savollar'],
+            'togri_javob' => $data['togri_javob'],
+            'ball'        => $data['ball'],
+        ]);
     }
 
 }
