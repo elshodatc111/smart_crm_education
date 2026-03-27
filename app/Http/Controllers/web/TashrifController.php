@@ -12,6 +12,7 @@ use App\Http\Requests\Web\Visit\UpdateUserRequest;
 use App\Http\Requests\Web\Visit\UserPaymentStoreRequest;
 use App\Models\ChegirmaHistory;
 use App\Models\Group;
+use App\Models\GroupTest;
 use App\Models\GroupUser;
 use App\Models\Kassa;
 use App\Models\Note;
@@ -27,8 +28,6 @@ use Illuminate\Validation\ValidationException;
 use Carbon\Carbon;
 
 class TashrifController extends Controller{
-
-
 
     public function tashriflar(){
         $users = User::where('role','user')->orderby('id','desc')->get();
@@ -127,7 +126,8 @@ class TashrifController extends Controller{
             $user_payments[$key]['created_at'] = $value->created_at;
         }
         $spisPayment = PaymentSpecial::get();
-        return view('tashrif.tashrif_show',compact('user','notes','history','newGroups','payChegirma','resGroup','user_payments','spisPayment'));
+        $testNatija = GroupTest::where('user_id',$id)->orderby('group_id','desc')->get();
+        return view('tashrif.tashrif_show',compact('user','notes','history','newGroups','payChegirma','resGroup','user_payments','spisPayment','testNatija'));
     }
 
     public function SpisPayment(StoreSpecialPaymentRequest $request){

@@ -300,6 +300,45 @@
             </div>
           </div>
         </div>
+      </div>      
+      <div class="col-lg-12">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Test natijalari</h5>
+            <div class="table-responsive" style="max-height: 350px; overflow-y: auto; overflow-x: hidden;height:350px">
+              <table class="table table-bordered" style="font-size: 14px;">
+                  <thead>
+                    <tr class="text-center">
+                      <th>#</th>
+                      <th>Guruh</th>
+                      <th>Kurs</th>
+                      <th>Testlar soni</th>
+                      <th>To'g'ri javob</th>
+                      <th>Ball</th>
+                      <th>Test vaqti</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @forelse ($testNatija as $item)
+                    <tr>
+                      <td class="text-center">{{ $loop->index+1 }}</td>
+                      <td class="text-center">{{ $item->group->group_name }}</td>
+                      <td class="text-center">{{ $item->course->cours_name }}</td>         
+                      <td class="text-center">{{ $item['savollar'] }}</td>
+                      <td class="text-center">{{ $item['togri_javob'] }}</td>
+                      <td class="text-center">{{ $item['ball'] }}</td>
+                      <td class="text-center">{{ $item['created_at'] }}</td>
+                    </tr>
+                    @empty
+                    <tr>
+                      <td colspan="7" class="text-center">Testlar mavjud emas.</td>
+                    </tr>
+                    @endforelse
+                  </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </section>
