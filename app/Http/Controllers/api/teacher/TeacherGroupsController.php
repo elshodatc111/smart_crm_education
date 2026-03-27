@@ -4,6 +4,8 @@ namespace App\Http\Controllers\api\teacher;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Web\Group\AttendanceStoreRequest;
+use App\Models\GroupTest;
+use App\Models\GroupUser;
 use App\Services\api\TeacherService;
 use Illuminate\Http\JsonResponse;
 
@@ -69,10 +71,17 @@ class TeacherGroupsController extends Controller{
     }
 
     public function testNatija($id){
+        $groupUsers = GroupUser::where('group_id',$id)->get();
+        $res = [];
+        foreach ($groupUsers as $key => $value) {
+            $GroupTest = GroupTest::where('group_id',$id)->where('user_id',$value->user_id)->select('savollar','togri_javob','ball')->get();
+            $res[$key]['user'] = $value->user->name;
+            $res[$key]['count'] = count($GroupTest);
+            $res[$key]['result'] = $GroupTest;
+        }
         return response()->json([
             'status' => 'success',
-            'data'   => $id,
-            'message' => 'Bu qismi tayyorlanmoqda (test natijalari)'
+            'data'   => $res,
         ]);
     }
 
