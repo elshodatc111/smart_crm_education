@@ -4,10 +4,6 @@ namespace App\Http\Controllers\api\user;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\api\user\TestAnswerStoreRequest;
-use App\Models\CoursTest;
-use App\Models\Group;
-use App\Models\GroupTest;
-use App\Models\GroupUser;
 use App\Services\api\UserGroupsService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\JsonResponse;
@@ -52,7 +48,7 @@ class UserGroupController extends Controller{
 
     public function allGroups():JsonResponse{
         try {
-            $groups = $this->userGroupsService->getUserGroups(auth()->id());
+            $groups = $this->userGroupsService->getUserGroups(Auth::id());
             return response()->json([
                 'status' => 'success',
                 'data'   => $groups
@@ -87,7 +83,7 @@ class UserGroupController extends Controller{
 
     public function payments():JsonResponse{
         try {
-            $res = $this->userGroupsService->getUserPaymentHistory(auth()->id());
+            $res = $this->userGroupsService->getUserPaymentHistory(Auth::id());
             return response()->json([
                 'status' => 'success',
                 'data'   => $res

@@ -7,6 +7,7 @@ use App\Http\Requests\api\auth\ChangePasswordRequest;
 use App\Http\Requests\api\auth\LoginRequest;
 use App\Services\api\AuthService;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller{
 
@@ -52,7 +53,7 @@ class AuthController extends Controller{
     }
 
     public function logout(): JsonResponse{
-        $this->authService->logout(auth()->user());
+        $this->authService->logout(Auth::user());
         return response()->json([
             'status' => 'success',
             'message' => 'Tizimdan muvaffaqiyatli chiqdingiz'
@@ -60,7 +61,7 @@ class AuthController extends Controller{
     }
 
     public function updatePassword(ChangePasswordRequest $request): JsonResponse{
-        $this->authService->changePassword(auth()->user(), $request->validated());
+        $this->authService->changePassword(Auth::user(), $request->validated());
         return response()->json([
             'status' => 'success',
             'message' => 'Parolingiz muvaffaqiyatli yangilandi.'

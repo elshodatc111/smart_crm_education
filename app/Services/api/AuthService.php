@@ -5,6 +5,7 @@ namespace App\Services\api;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Auth;
 
 class AuthService{
 
@@ -35,7 +36,7 @@ class AuthService{
     }
 
     public function profile(){
-        return auth()->user();
+        return Auth::user();
     }
 
     public function logout($user){

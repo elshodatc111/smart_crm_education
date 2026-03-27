@@ -8,6 +8,7 @@ use App\Models\GroupTest;
 use App\Models\GroupUser;
 use App\Services\api\TeacherService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Auth;
 
 class TeacherGroupsController extends Controller{
     
@@ -16,7 +17,7 @@ class TeacherGroupsController extends Controller{
         $this->teacherService = $teacherService;
     }
     public function home(): JsonResponse{
-        $res = $this->teacherService->getGroupsForTeacher(auth()->id());
+        $res = $this->teacherService->getGroupsForTeacher(Auth::id());
         return response()->json([
             'status' => 'success',
             'data'   => $res
