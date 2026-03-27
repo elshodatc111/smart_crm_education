@@ -10,6 +10,7 @@ use App\Http\Requests\Web\Visit\StoreSpecialPaymentRequest;
 use App\Http\Requests\Web\Visit\StoreVisitRequest;
 use App\Http\Requests\Web\Visit\UpdateUserRequest;
 use App\Http\Requests\Web\Visit\UserPaymentStoreRequest;
+use App\Jobs\SendSmsJob;
 use App\Models\ChegirmaHistory;
 use App\Models\Group;
 use App\Models\GroupTest;
@@ -18,9 +19,11 @@ use App\Models\Kassa;
 use App\Models\Note;
 use App\Models\PaymentSetting;
 use App\Models\PaymentSpecial;
+use App\Models\SettingSms;
 use App\Models\User;
 use App\Models\UserHistory;
 use App\Models\UserPayment;
+use App\Services\EskizService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
@@ -28,7 +31,7 @@ use Illuminate\Validation\ValidationException;
 use Carbon\Carbon;
 
 class TashrifController extends Controller{
-
+    // SendSmsJob::dispatch('998945204004', $text);
     public function tashriflar(Request $request){
         $query = User::where('role', 'user');
         if ($request->has('search')) {
@@ -81,7 +84,7 @@ class TashrifController extends Controller{
         }
         return $res;
     }
-
+    
     public function tashrifShow($id){
         $user = User::findOrFail($id);
         $notes = Note::where('note_id',$id)->where('type','user')->orderby('id', 'desc')->get();
@@ -210,7 +213,6 @@ class TashrifController extends Controller{
                 'created_by' => Auth::id()
             ]);
             $user->increment('balance', $chegirma);
-
         });
         return redirect()->back()->with('success', 'To\'lov muvaffaqiyatli qabul qilindi.');
     }
