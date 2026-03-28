@@ -31,7 +31,7 @@
                 <li>
                     <hr class="dropdown-divider m-0"></li>
                 <li>
-                    <a class="dropdown-item d-flex align-items-center py-2" href="#">
+                    <a class="dropdown-item d-flex align-items-center py-2" href="{{ route('profile') }}">
                         <i class="bi bi-person-vcard me-2 text-primary"></i>
                         <span>Profil</span>
                     </a>

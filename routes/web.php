@@ -11,6 +11,7 @@ use App\Http\Controllers\web\{
     TashrifController,
     DamOlishController,
     GroupController,
+    ProfileController,
     ReportController,
     TKunController,
 };
@@ -26,6 +27,9 @@ Route::middleware(['auth','role:admin,director,manager,operator'])->group(functi
     Route::get('/', [HomeController::class, 'dashboard'])->name('home');
     # TKUN
     Route::get('/tkun', [TKunController::class, 'tkun'])->name('tkun');
+    # Profile
+    Route::get('/profile', [ProfileController::class, 'profile'])->name('profile');
+    Route::post('/profile/password/update', [ProfileController::class, 'updatePassword'])->name('profile_password_update');
     # TASHRIF
     Route::get('/visits', [TashrifController::class, 'tashriflar'])->name('tashriflar');
     Route::post('/visits/store', [TashrifController::class,'store'])->name('visits_store');
