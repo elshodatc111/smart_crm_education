@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Web\Emploes\SalaryPaymentRequest;
 use App\Http\Requests\Web\Emploes\StoreEmploesRequest;
 use App\Http\Requests\Web\Emploes\UpdateUserRequest;
+use App\Jobs\SendSmsJob;
 use App\Models\Balans;
 use App\Models\BalansHistory;
 use App\Models\EmplesPayment;
@@ -38,6 +39,7 @@ class EmploesController extends Controller{
             'created_by' => Auth::id(),
             'password' => 'password'
         ]);
+        SendSmsJob::dispatch(str_replace('+', '', $request->phone),$request->name,"","",'register');
         return back()->with('success', 'Hodim muvaffaqiyatli qo‘shildi');
     }
     // O'qituvchi ish haqini hisoblash
@@ -112,6 +114,8 @@ class EmploesController extends Controller{
                 'admin_id' => Auth::id(),
                 'is_active' => true
             ]);
+            $user = User::find($request->user_id);
+            SendSmsJob::dispatch(str_replace('+', '', $user->phone),$user->name,"$request->amount","",'employee_payment');
             $balans = Balans::first();
             if($request->payment_type == 'cash'){
                 $balans->decrement('cash_salary', $request->amount);
@@ -138,6 +142,7 @@ class EmploesController extends Controller{
         $user = User::findOrFail($request->user_id);
         $user->password = 'password';
         $user->save();
+        SendSmsJob::dispatch(str_replace('+', '', $user->phone),$user->name,"","",'password');
         return back()->with('success', 'Parol yangilandi!');
     }
 
