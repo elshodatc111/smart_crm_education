@@ -139,10 +139,10 @@
                   <thead>
                     <tr class="text-center">
                       <th>#</th>
-                      <th>Hodisa vaqti</th>
                       <th>Hodisa turi</th>
                       <th>Hodisa haqida</th>
                       <th>Meneger</th>
+                      <th>Hodisa vaqti</th>
                     </tr>
                   </thead>
                   <tbody>

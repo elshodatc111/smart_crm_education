@@ -3,6 +3,7 @@
 use App\Http\Controllers\api\{AuthController,PasswordResetController};
 use App\Http\Controllers\api\teacher\{TeacherGroupsController, TeacherPaymentController};
 use App\Http\Controllers\api\user\UserGroupController;
+use App\Http\Controllers\Web\ChartController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('/login', [AuthController::class, 'login']);
@@ -33,5 +34,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user/test/group', [UserGroupController::class, 'testGroup']);
     Route::get('/user/test/show/{cours_id}/{group_id}', [UserGroupController::class, 'testShow']);    
     Route::post('/user/test/store', [UserGroupController::class, 'testStore']);
-
+    // Admin
+    Route::get('/admin/home', [ChartController::class, 'home']); 
 });

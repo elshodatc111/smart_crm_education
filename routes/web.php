@@ -117,5 +117,6 @@ Route::middleware(['auth','role:admin,director'])->group(function () {
 
     Route::get('/upload', [UploadController::class, 'uploadViwe'])->name('upload_view');
     Route::post('/upload/users', [UploadController::class, 'uploadUsers'])->name('upload_users');
+    Route::post('/upload/user-history', [UploadController::class, 'uploadUserHistory'])->name('upload_user_history');
 
 });

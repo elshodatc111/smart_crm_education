@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use App\Jobs\SendSmsJob;
+use App\Models\SettingSms;
 use App\Models\User;
 use Carbon\Carbon;
 
@@ -15,6 +16,8 @@ class SendBirthdaySms extends Command{
 
     public function handle(){
         $today = Carbon::today();
+        $setting = SettingSms::first()->birthday_sms;
+        if (!$setting) {
         User::whereMonth('birth_date', $today->month)
             ->whereDay('birth_date', $today->day)
             ->chunk(100, function ($users) {
@@ -28,6 +31,9 @@ class SendBirthdaySms extends Command{
                     );
                 }
             });
+        }else{
+            $this->info('Tug‘ilgan kun SMS xizmati o‘chirib qo‘yilgan.');
+        }
         $this->info('Tug‘ilgan kun SMSlari navbatga qo‘shildi.');
     }
 }

@@ -9,6 +9,7 @@ use App\Models\GroupUser;
 use App\Models\User;
 use App\Models\UserPayment;
 use Carbon\Carbon;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class ChartController extends Controller{
 
@@ -255,6 +256,33 @@ class ChartController extends Controller{
         $getLast6Months = $this->getLast6Months();
         $oylikPayment = $this->oylikPayment();        
         return view('chart.payment', compact('getLast5Weeks', 'haftalikPayment','getLast7Days', 'kunlikPayment','getLast6Months','oylikPayment'));    
+    }
+
+    public function home(): JsonResponse{        
+        return response()->json([
+            'status' => 'success',
+            'activeUser' => $this->activeUser(),
+            'tashrifHafta' => [
+                'data' => $this->getLast5Weeks(),
+                'result' => $this->weeks5chart(),
+            ],
+            'tashrifOy' => [
+                'data' => $this->getLast6Months(),
+                'result' => $this->month6chart()
+            ],
+            'paymentKun' => [
+                'data' => $this->getLast7Days(),
+                'result' => $this->kunlikPayment(),
+            ],
+            'paymentHafta' => [
+                'data' => $this->getLast5Weeks(),
+                'result' => $this->haftalikPayment(),
+            ],
+            'paymentOy' => [
+                'data' => $this->getLast6Months(),
+                'result' => $this->oylikPayment()
+            ]
+        ], 200);
     }
 
 }
