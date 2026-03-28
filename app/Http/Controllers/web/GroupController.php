@@ -3,12 +3,12 @@
 namespace App\Http\Controllers\web;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Web\Group\AttendanceStoreRequest;
 use App\Http\Requests\Web\Group\GroupStoreRequest;
 use App\Http\Requests\Web\Group\RemoveStudentRequest;
 use App\Http\Requests\Web\Group\SendDebitSmsRequest;
 use App\Http\Requests\Web\Group\StoreGroupContinueRequest;
 use App\Http\Requests\Web\Visit\UpdateGroupRequest;
+use App\Jobs\SendSmsJob;
 use App\Models\ChegirmaHistory;
 use App\Models\Classroom;
 use App\Models\Cours;
@@ -21,7 +21,6 @@ use App\Models\PaymentSetting;
 use App\Models\User;
 use App\Models\UserDavomad;
 use App\Models\UserHistory;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
@@ -105,6 +104,7 @@ class GroupController extends Controller{
         });
         return back()->with('success', 'Guruh va dars jadvali yaratildi ✅');
     }
+
     public function showAttendance($groupId) {
         $groupDays = GroupData::where('group_id', $groupId)->orderBy('data', 'asc')->get();
         $groupUsers = GroupUser::with('user')->where('group_id', $groupId)->get();
@@ -115,6 +115,7 @@ class GroupController extends Controller{
             'allAttendances' => $allAttendances
         ];
     }
+
     public function show($id){
         $group = Group::findOrFail($id);
         $cours = Cours::get();
@@ -152,11 +153,12 @@ class GroupController extends Controller{
     }
 
     public function debitSendMessage(SendDebitSmsRequest $request){
-        $groupId = $request->group_id;
-        $selectedStudents = $request->student_ids; // Bu tanlangan user_id larning massivi
+        $selectedStudents = $request->student_ids;
         try {
-            // SMS yuborish logikasi shu yerda bo'ladi
-            // Masalan: foreach ($selectedStudents as $id) { ... }
+            foreach ($selectedStudents as $key => $value) {
+                $user = User::find($value);
+                SendSmsJob::dispatch(str_replace('+', '', $user->phone),$user->name,"$user->balance","",'debt');
+            }
             return back()->with('success', count($selectedStudents) . " ta talabaga SMS yuborish navbatga qo'yildi.");            
         } catch (\Exception $e) {
             return back()->withErrors(['error' => 'SMS yuborishda texnik xatolik: ' . $e->getMessage()]);
