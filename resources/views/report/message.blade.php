@@ -20,6 +20,7 @@
             <div class="col-6">
               <select name="report_type" required class="form-select">
                 <option value="">Tanlang...</option>
+                <option value="send_message">Barcha yuborilgan smslar</option>
               </select>
             </div>
             <div class="col-6">

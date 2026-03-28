@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\web;
 
-use App\Exports\{AllGroupsDataExport, AllGroupsExport, BalansHistoryExport, EmploesPaymentExport, GroupUserExport, KassaHistoryExport, TestNatijaExport, UserChegirmaHistoryExport, UserDavomadExport, UserHistoryExport, UserPaymenmtExport,UsersExport};
+use App\Exports\{AllGroupsDataExport, AllGroupsExport, BalansHistoryExport, EmploesPaymentExport, GroupUserExport, KassaHistoryExport, SmsLogExport, TestNatijaExport, UserChegirmaHistoryExport, UserDavomadExport, UserHistoryExport, UserPaymenmtExport,UsersExport};
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
@@ -64,11 +64,9 @@ class ReportController extends Controller{
         }elseif($report_type == 'all_group_user'){
             $fileName = 'BarchaGuruhTalanalariTarixi' . now()->format('Y_m_d_His') . '.xlsx';
             return Excel::download(new GroupUserExport, $fileName);
-        }
-
-        elseif($report_type == 'all_group_user'){
-            $fileName = 'BarchaGuruhTalanalariTarixi' . now()->format('Y_m_d_His') . '.xlsx';
-            
+        }elseif($report_type == 'send_message'){
+            $fileName = 'BarchaSMSTARIXI' . now()->format('Y_m_d_His') . '.xlsx';
+            return Excel::download(new SmsLogExport, $fileName);
         }
         return back()->with('success', 'Hisobot mofaqiyatli yuklandi ✅');
     }
