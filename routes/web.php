@@ -12,6 +12,7 @@ use App\Http\Controllers\web\{
     DamOlishController,
     GroupController,
     ReportController,
+    TKunController,
 };
 use Illuminate\Support\Facades\Route;
 
@@ -23,6 +24,8 @@ Route::post('/login/post', [AuthController::class, 'login_post'])->name('login_p
 Route::middleware(['auth','role:admin,director,manager,operator'])->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     Route::get('/', [HomeController::class, 'dashboard'])->name('home');
+    # TKUN
+    Route::get('/tkun', [TKunController::class, 'tkun'])->name('tkun');
     # TASHRIF
     Route::get('/visits', [TashrifController::class, 'tashriflar'])->name('tashriflar');
     Route::post('/visits/store', [TashrifController::class,'store'])->name('visits_store');

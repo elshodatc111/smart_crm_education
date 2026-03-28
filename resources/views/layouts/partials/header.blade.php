@@ -1,17 +1,21 @@
 <nav class="header-nav ms-auto">
     <ul class="d-flex align-items-center list-unstyled mb-0">
         <li class="nav-item dropdown">
-          <a class="nav-link nav-icon" href="#">
+          <a class="nav-link nav-icon" href="{{ route('tkun') }}">
             <i class="bi bi-cake2 text-primary"></i>
-            <span class="badge bg-warning badge-number">0</span>
+            <span class="badge bg-success badge-number">
+                {{ \App\Models\User::whereMonth('birth_date', now()->month)->whereDay('birth_date', now()->day)->count() }}
+            </span>
           </a>
         </li>
+        <!--
         <li class="nav-item dropdown">
           <a class="nav-link nav-icon" href="#">
             <i class="bi bi-bell"></i>
             <span class="badge bg-primary badge-number">0</span>
           </a>
         </li>
+        -->
         <li class="nav-item dropdown pe-3">
             <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
                 <i class="bi bi-person-circle fs-5"></i>
