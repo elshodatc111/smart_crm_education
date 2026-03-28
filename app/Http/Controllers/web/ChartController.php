@@ -8,7 +8,6 @@ use App\Models\Group;
 use App\Models\GroupUser;
 use App\Models\User;
 use App\Models\UserPayment;
-use Illuminate\Http\Request;
 use Carbon\Carbon;
 
 class ChartController extends Controller{
@@ -24,12 +23,12 @@ class ChartController extends Controller{
     public function activeUser(){
         $getLast12Months = $this->getLast12Months();
         $aktive = [];
-        foreach ($getLast12Months as $key => $value) {
+        foreach ($getLast12Months as $value) {
             $Groups = Group::where('start_lesson','>=',$value.'-01')->where('start_lesson','<=',$value.'-31')->get();
             $userid = [];
-            foreach ($Groups as $k => $v) {
+            foreach ($Groups as $v) {
                 $groupUsers = GroupUser::where('group_id',$v->id)->get();
-                foreach ($groupUsers as $key => $value2) {
+                foreach ($groupUsers as $value2) {
                     if(!in_array($value2->user_id, $userid)){
                         $userid[] = $value2->user_id;
                     }
@@ -42,7 +41,6 @@ class ChartController extends Controller{
             'active' => array_values($aktive)
         ];
     }
-
 
     public function getLast5Weeks(){
         $weeks = [];
@@ -86,6 +84,7 @@ class ChartController extends Controller{
         }
         return $data;
     }
+
     public function getLast6Months(){
         $months = [];
         for ($i = 5; $i >= 0; $i--) {
@@ -93,6 +92,7 @@ class ChartController extends Controller{
         }
         return $months;
     }
+
     public function month6chart(){
         $getLast5Weeks = $this->getLast6Months();
         $data = [];
@@ -119,6 +119,7 @@ class ChartController extends Controller{
         }
         return $data;
     }
+
     public function tashrif(){
         $activeUser = $this->activeUser();
         $getLast5Weeks = $this->getLast5Weeks();
@@ -127,7 +128,6 @@ class ChartController extends Controller{
         $month6chart = $this->month6chart();
         return view('chart.tashrif', compact('activeUser', 'getLast5Weeks', 'weeks5chart', 'getLast6Months', 'month6chart'));
     }
-
 
     public function haftalikPayment(){
         $getLast5Weeks = $this->getLast5Weeks();
@@ -158,6 +158,7 @@ class ChartController extends Controller{
         }
         return $array;
     }
+
     public function getLast7Days(){
         $days = [];
         for ($i = 6; $i >= 0; $i--) {
@@ -165,6 +166,7 @@ class ChartController extends Controller{
         }
         return $days;
     }
+
     public function kunlikPayment(){
         $getLast7Days = $this->getLast7Days();
         $array = [];
@@ -194,6 +196,7 @@ class ChartController extends Controller{
         }
         return $array;
     }
+
     public function oylikPayment(){
         $getLast6Months = $this->getLast6Months();
         $array = [];
@@ -243,14 +246,14 @@ class ChartController extends Controller{
         }
         return $array;
     }
+
     public function payment(){
         $getLast5Weeks = $this->getLast5Weeks();
         $haftalikPayment = $this->haftalikPayment();
         $getLast7Days = $this->getLast7Days();
         $kunlikPayment = $this->kunlikPayment();
         $getLast6Months = $this->getLast6Months();
-        $oylikPayment = $this->oylikPayment();
-        
+        $oylikPayment = $this->oylikPayment();        
         return view('chart.payment', compact('getLast5Weeks', 'haftalikPayment','getLast7Days', 'kunlikPayment','getLast6Months','oylikPayment'));    
     }
 
