@@ -394,7 +394,7 @@
             @endforeach
           </select>
           <label for="discount" class="my-2">Chegirma summasi</label>
-          <input type="text" name="discount" class="form-control" id="amount0" required>
+          <input type="text" name="discount" class="form-control" id="amount3" required>
           <label for="description" class="my-2">Chegirma haqida</label>
           <textarea name="description" class="form-control" required></textarea>
         </div>
@@ -440,7 +440,7 @@
           <label for="cash" class="mb-2">Naqt to'lov</label>
           <input type="text" name="cash" required id="amount2" value="0" class="form-control">
           <label for="card" class="my-2">Karta to'lov</label>
-          <input type="text" name="card" required id="amount3" value="0" class="form-control">
+          <input type="text" name="card" required id="amount1" value="0" class="form-control">
           <label for="card" class="my-2">To'lov turi</label>
           <select name="type" required class="form-select">
             <option value="payment">To'lov</option>

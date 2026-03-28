@@ -31,7 +31,7 @@ use Illuminate\Validation\ValidationException;
 use Carbon\Carbon;
 
 class TashrifController extends Controller{
-    // SendSmsJob::dispatch('998945204004', $text);
+    
     public function tashriflar(Request $request){
         $query = User::where('role', 'user');
         if ($request->has('search')) {
@@ -64,6 +64,7 @@ class TashrifController extends Controller{
             'description' => "Markazga tashri",
             'created_by' => Auth::id()
         ]);
+        SendSmsJob::dispatch(str_replace('+', '', $request->phone),$request->name,"0","",'register');
         return back()->with('success','Tashrif muvaffaqiyatli qo‘shildi');
     }
 
@@ -213,6 +214,9 @@ class TashrifController extends Controller{
                 'created_by' => Auth::id()
             ]);
             $user->increment('balance', $chegirma);
+            $cashCard = $request->cash + $request->card;
+            SendSmsJob::dispatch(str_replace('+', '', $user->phone),$user->name,"$cashCard","",'user_payment');
+            SendSmsJob::dispatch(str_replace('+', '', $user->phone),$user->name,"$chegirma","",'discount');
         });
         return redirect()->back()->with('success', 'To\'lov muvaffaqiyatli qabul qilindi.');
     }
@@ -239,6 +243,7 @@ class TashrifController extends Controller{
                 'created_by' => Auth::id()
             ]);            
             $user->increment('balance', $request->discount);
+            SendSmsJob::dispatch(str_replace('+', '', $user->phone),$user->name,"$request->discount","",'discount');
         });
         return redirect()->back()->with('success', 'Chegirma muvaffaqiyatli qo\'shildi!');
     }
@@ -320,7 +325,8 @@ class TashrifController extends Controller{
             'created_by' => Auth::id()
         ]);
         $user->password = 'password';
-        $user->save();
+        $user->save();        
+        SendSmsJob::dispatch(str_replace('+', '', $user->phone),$user->name,"","",'password');
         return back()->with('success', "Parol yangilandi. Yangi parol: password");
     }
     
@@ -372,9 +378,9 @@ class TashrifController extends Controller{
                         'type' => 'discont',
                         'description' => $group." guruhga ".$pay." to'lovi uchun ".$discount." chegirma berildi",
                         'created_by' => Auth::id()
-                    ]);
-                    
+                    ]);                    
                     $user->increment('balance', $discount);
+                    SendSmsJob::dispatch(str_replace('+', '', $user->phone),$user->name,"$discount","",'discount');
                 }
             }
             if($request->cash>0){
@@ -439,8 +445,10 @@ class TashrifController extends Controller{
             }
             if($request->type == 'payment'){
                 $user->increment('balance', $pay);
+                SendSmsJob::dispatch(str_replace('+', '', $user->phone),$user->name,"$pay","",'user_payment');
             }else{
-                $user->decrement('balance', $pay);
+                $user->decrement('balance', $pay);                
+                SendSmsJob::dispatch(str_replace('+', '', $user->phone),$user->name,"$pay","",'refund');
             }
          });
          return back()->with('success', 'To\'lov mofaqiyatli amalga oshirildi');
