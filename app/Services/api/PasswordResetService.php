@@ -2,6 +2,7 @@
 
 namespace App\Services\api;
 
+use App\Jobs\SendSmsJob;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -22,8 +23,7 @@ class PasswordResetService{
             ['phone' => $phone],
             ['code' => $code, 'expires_at' => now()->addMinutes(10)]
         );
-        // SMS yuborish mantiqi (Sizning SMS provayderingiz)
-        // SmsService::send($phone, "Tasdiqlash kodi: $code");
+        SendSmsJob::dispatch(str_replace('+', '', $user->phone),$user->name,"","$code",'verify');
         return $code;
     }
     
@@ -32,13 +32,12 @@ class PasswordResetService{
         if (!$otp) {
             throw ValidationException::withMessages(['code' => 'Kod xato yoki muddati o‘tgan.']);
         }
-        $newPassword = Str::random(8);        
+        $newPassword = 'password';        
         $user = User::where('phone', $phone)->first();
         $user->password = $newPassword;
         $user->save();
         DB::table('otp_codes')->where('phone', $phone)->delete();
-        // SMS orqali yangi parolni yuborish
-        // SmsService::send($phone, "Sizning yangi parolingiz: $newPassword");
+        SendSmsJob::dispatch(str_replace('+', '', $user->phone),$user->name,"","",'password');
         return $newPassword;
     }
 
