@@ -282,7 +282,7 @@ class ChartController extends Controller{
                 'data' => $this->getLast6Months(),
                 'result' => $this->oylikPayment()
             ]
-        ], 200);
+        ], 200); 
     }
 
 }

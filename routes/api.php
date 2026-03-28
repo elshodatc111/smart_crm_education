@@ -3,7 +3,7 @@
 use App\Http\Controllers\api\{AuthController,PasswordResetController};
 use App\Http\Controllers\api\teacher\{TeacherGroupsController, TeacherPaymentController};
 use App\Http\Controllers\api\user\UserGroupController;
-use App\Http\Controllers\Web\ChartController;
+use App\Http\Controllers\web\ChartController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('/login', [AuthController::class, 'login']);
