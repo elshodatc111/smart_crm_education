@@ -4,6 +4,7 @@ use App\Http\Controllers\UploadController;
 use App\Http\Controllers\web\{
     AuthController,
     BalansController,
+    ChartController,
     EmploesController,
     HomeController,
     KassaController,
@@ -55,15 +56,16 @@ Route::middleware(['auth','role:admin,director,manager,operator'])->group(functi
     Route::post('/group/remote/user', [GroupController::class, 'remoteUser'])->name('group_remote_user');
     Route::post('/group/debit/send/message', [GroupController::class, 'debitSendMessage'])->name('group_debit_send_message');
     Route::post('/group/davomad', [GroupController::class, 'davomad'])->name('attendance_store');
+
+});
+# Hodimlar
+Route::middleware(['auth','role:admin,director,manager'])->group(function () { 
     # Hisobotlar
     Route::get('/report/users', [ReportController::class, 'users'])->name('report_users');
     Route::get('/report/payment', [ReportController::class, 'payment'])->name('report_payment');
     Route::get('/report/groups', [ReportController::class, 'groups'])->name('report_groups');
     Route::get('/report/message', [ReportController::class, 'message'])->name('report_message');
     Route::post('/report/export', [ReportController::class, 'export'])->name('report_export');
-});
-# Hodimlar
-Route::middleware(['auth','role:admin,director'])->group(function () { 
     # Kassa success    
     Route::post('/kassa-history/{id}/approve', [KassaController::class, 'approve'])->name('kassa_history_approve');
     # Balans
@@ -79,6 +81,9 @@ Route::middleware(['auth','role:admin,director'])->group(function () {
     Route::post('/emploe/update-password', [EmploesController::class, 'updatePassword'])->name('emploes_updatePassword');
     Route::post('/emploe/toggle-status', [EmploesController::class, 'toggleStatus'])->name('emploes_toggleStatus');
     Route::post('/emploe/update', [EmploesController::class, 'update'])->name('emploes_update');
+    # STATISTIKA
+    Route::get('/chart/tashrif', [ChartController::class, 'tashrif'])->name('chart_tashrif');
+    Route::get('/chart/payment', [ChartController::class, 'payment'])->name('chart_payment');
 });
 # Sozlamalar
 Route::middleware(['auth','role:admin,director'])->group(function () {

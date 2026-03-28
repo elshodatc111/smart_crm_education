@@ -70,13 +70,18 @@
     </li>
 
     <li class="nav-item">
-      <a class="nav-link collapsed" data-bs-target="#chart-nav" data-bs-toggle="collapse" href="#">
+      <a class="nav-link {{ request()->routeIs(['chart_*']) ? '' : 'collapsed' }}" data-bs-target="#chart-nav" data-bs-toggle="collapse" href="#">
         <i class="bi bi-graph-up-arrow"></i><span>Statistika</span><i class="bi bi-chevron-down ms-auto"></i>
       </a>
-      <ul id="chart-nav" class="nav-content collapse" data-bs-parent="#sidebar-nav">
+      <ul id="chart-nav" class="nav-content collapse {{ request()->routeIs(['chart_*']) ? 'show' : '' }}" data-bs-parent="#sidebar-nav">
         <li>
-          <a href="#" class="nav-link">
-            <i class="bi bi-circle"></i><span>Natijalar tahlili</span>
+          <a href="{{ route('chart_tashrif') }}" class="{{ request()->routeIs('chart_tashrif') ? 'active' : '' }}">
+            <i class="bi bi-circle"></i><span>Tashriflar</span>
+          </a>
+        </li>
+        <li>
+          <a href="{{ route('chart_payment') }}" class="{{ request()->routeIs('chart_payment') ? 'active' : '' }}">
+            <i class="bi bi-circle"></i><span>To'lovlar</span>
           </a>
         </li>
       </ul>
