@@ -3,11 +3,11 @@
 <head>
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
-  <title>{{ __('messages.welcome') }}</title>
+  <title>Login</title>
   <meta content="" name="description">
   <meta content="" name="keywords">
-  <link href="{{ asset('assets/img/favicon.png') }}" rel="icon">
-  <link href="{{ asset('assets/img/apple-touch-icon.png') }}" rel="apple-touch-icon">
+  <link href="{{ asset('assets/images/logo1.png') }}" rel="icon">
+  <link href="{{ asset('assets/images/logo1.png') }}" rel="apple-touch-icon">
   <link href="https://fonts.gstatic.com" rel="preconnect">
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
   <link href="{{ asset('assets/vendor/bootstrap/css/bootstrap.min.css')}}" rel="stylesheet">
@@ -30,10 +30,12 @@
                             <div class="card mb-3">
                                 <div class="card-body">
                                     <div class="pt-4 pb-2 text-center">
-                                        <div class="logo-container">
-                                            <i class="bi bi-person-heart text-primary" style="font-size: 3rem;"></i>
+                                        <div class="text-center">
+                                            <img src="{{ asset('assets/images/logo1.png') }}" alt="">
+                                            <img src="{{ asset('assets/images/logo2.png') }}" alt="">
+                                            <br>
+                                            <br>
                                         </div>
-                                        <h5 class="card-title text-center pb-0 fs-4">Kirish</h5>
                                     </div>
                                     {{-- Umumiy xatolar --}}
                                     @if ($errors->any())
