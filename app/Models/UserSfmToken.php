@@ -10,4 +10,6 @@ class UserSfmToken extends Model{
     public function user(): BelongsTo{
         return $this->belongsTo(User::class);
     }
+    public $incrementing = false; 
+    protected $primaryKey = 'user_id';
 }
